@@ -1,5 +1,8 @@
 # LoRa environment sensor
 
+> [!IMPORTANT]
+> Work in progress, check back soon for updates.
+
 * LoRaWAN implementation
 * Measures:
 	* Temperature
