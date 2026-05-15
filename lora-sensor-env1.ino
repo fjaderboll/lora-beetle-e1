@@ -1,12 +1,233 @@
+/*
+ * LoRa environment sensor (CubeCell HTCC-AB01)
+ *
+ * Sensors:
+ *   - BME280 (I2C) : temperature, humidity, pressure
+ *   - BH1750  (I2C): ambient light (lux)
+ *
+ * Behaviour:
+ *   - OTAA join on power-up
+ *   - Every APP_TX_DUTYCYCLE (15 min) wake up, read sensors,
+ *     transmit an uplink, then go back to deep sleep.
+ *
+ * Region / sub-band must be selected in the Arduino IDE
+ *   "Tools" menu (LoRaWAN Region, Class, etc.).
+ *
+ * Uplink payload (11 bytes, big-endian, port 2):
+ *   [0..1] temperature * 100   (int16)   -- e.g. 2345 = 23.45 C
+ *   [2..3] humidity    * 100   (uint16)  -- e.g. 5012 = 50.12 %
+ *   [4..5] pressure    * 10    (uint16)  -- hPa * 10, e.g. 10132 = 1013.2 hPa
+ *   [6..9] light (lux) * 100   (uint32)  -- e.g. 12345 = 123.45 lx
+ *   [10]   battery level       (uint8)   -- CubeCell BoardGetBatteryLevel (0..254)
+ */
+
+#include "LoRaWan_APP.h"
+#include "Arduino.h"
+#include <Wire.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BME280.h>
+#include <BH1750.h>
 
 #include "keys.h"
 
-void setup() {
-  // put your setup code here, to run once:
+/* ------------------------------------------------------------------ */
+/* LoRaWAN configuration                                              */
+/* ------------------------------------------------------------------ */
 
+/* LoRaWAN region (override via Arduino IDE "Tools > LoRaWAN Region" menu).
+ * The macro ACTIVE_REGION is supplied by the CubeCell board package. */
+#ifndef ACTIVE_REGION
+#define ACTIVE_REGION   LORAMAC_REGION_EU868
+#endif
+LoRaMacRegion_t loraWanRegion = ACTIVE_REGION;
+
+/* Class A : end-device only opens RX windows after a TX. */
+DeviceClass_t  loraWanClass    = CLASS_A;
+
+/* Uplink interval: 15 minutes (in milliseconds). */
+uint32_t appTxDutyCycle        = 15 * 60 * 1000;
+
+/* OTAA activation. */
+bool overTheAirActivation      = true;
+
+/* Adaptive Data Rate. */
+bool loraWanAdr                = true;
+
+/* Keep network state between deep-sleep cycles
+ * (so we don't have to re-join on every wake-up). */
+bool keepNet                   = true;
+
+/* Unconfirmed uplinks (saves airtime / battery). */
+bool isTxConfirmed             = false;
+
+/* Application port. */
+uint8_t appPort                = 2;
+
+/* Confirmed-uplink retries (only relevant if isTxConfirmed = true). */
+uint8_t confirmedNbTrials      = 4;
+
+/* Sub-band selection for regions that need it (e.g. US915, AU915).
+ * EU868 / AS923 / IN865 ignore this. The default mask enables the first
+ * 8 channels; adjust if your network uses a different sub-band. */
+uint16_t userChannelsMask[6]   = { 0x00FF, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000 };
+
+/* ------------------------------------------------------------------ */
+/* Sensor objects                                                     */
+/* ------------------------------------------------------------------ */
+
+static Adafruit_BME280 bme;
+static BH1750          lightMeter;
+
+static bool bmeReady   = false;
+static bool lightReady = false;
+
+/* ------------------------------------------------------------------ */
+/* Helpers                                                            */
+/* ------------------------------------------------------------------ */
+
+static void initSensors()
+{
+	/* CubeCell powers external 3V3 (sensors) via the Vext pin. */
+	pinMode(Vext, OUTPUT);
+	digitalWrite(Vext, LOW);   // LOW = Vext ON
+	delay(10);
+
+	Wire.begin();
+
+	/* BME280 default I2C address is 0x76, fall back to 0x77. */
+	bmeReady = bme.begin(0x76, &Wire);
+	if (!bmeReady) {
+		bmeReady = bme.begin(0x77, &Wire);
+	}
+	if (bmeReady) {
+		/* Weather-station preset: 1x oversampling, forced mode, filter off. */
+		bme.setSampling(Adafruit_BME280::MODE_FORCED,
+		                Adafruit_BME280::SAMPLING_X1,   // temp
+		                Adafruit_BME280::SAMPLING_X1,   // pressure
+		                Adafruit_BME280::SAMPLING_X1,   // humidity
+		                Adafruit_BME280::FILTER_OFF);
+	} else {
+		Serial.println(F("BME280 not found"));
+	}
+
+	lightReady = lightMeter.begin(BH1750::ONE_TIME_HIGH_RES_MODE);
+	if (!lightReady) {
+		Serial.println(F("BH1750 not found"));
+	}
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
+static void writeUint16BE(uint8_t *buf, uint16_t v)
+{
+	buf[0] = (uint8_t)(v >> 8);
+	buf[1] = (uint8_t)(v & 0xFF);
+}
 
+static void writeUint32BE(uint8_t *buf, uint32_t v)
+{
+	buf[0] = (uint8_t)(v >> 24);
+	buf[1] = (uint8_t)(v >> 16);
+	buf[2] = (uint8_t)(v >> 8);
+	buf[3] = (uint8_t)(v & 0xFF);
+}
+
+/* Build the uplink payload from a fresh sensor read. */
+static void prepareTxFrame(uint8_t port)
+{
+	(void)port;
+
+	float tempC      = 0.0f;
+	float humidity   = 0.0f;
+	float pressureHp = 0.0f;
+	float lux        = 0.0f;
+
+	if (bmeReady) {
+		/* Forced mode: trigger one measurement and read it back. */
+		bme.takeForcedMeasurement();
+		tempC      = bme.readTemperature();          // °C
+		humidity   = bme.readHumidity();             // %
+		pressureHp = bme.readPressure() / 100.0f;    // Pa -> hPa
+	}
+
+	if (lightReady) {
+		/* ONE_TIME mode: re-arm and wait for a fresh sample. */
+		lightMeter.configure(BH1750::ONE_TIME_HIGH_RES_MODE);
+		uint32_t start = millis();
+		while (!lightMeter.measurementReady(true) && (millis() - start) < 200) {
+			delay(10);
+		}
+		lux = lightMeter.readLightLevel();
+		if (lux < 0) {
+			lux = 0;
+		}
+	}
+
+	int16_t  tempScaled  = (int16_t)lroundf(tempC * 100.0f);
+	uint16_t humScaled   = (uint16_t)lroundf(humidity * 100.0f);
+	uint16_t pressScaled = (uint16_t)lroundf(pressureHp * 10.0f);
+	uint32_t luxScaled   = (uint32_t)lroundf(lux * 100.0f);
+	uint8_t  battery     = BoardGetBatteryLevel();
+
+	appDataSize = 11;
+	writeUint16BE(&appData[0], (uint16_t)tempScaled);
+	writeUint16BE(&appData[2], humScaled);
+	writeUint16BE(&appData[4], pressScaled);
+	writeUint32BE(&appData[6], luxScaled);
+	appData[10] = battery;
+
+	Serial.printf("T=%.2f C  RH=%.2f %%  P=%.2f hPa  L=%.2f lx  bat=%u\n",
+	              tempC, humidity, pressureHp, lux, battery);
+}
+
+/* ------------------------------------------------------------------ */
+/* Arduino entry points                                               */
+/* ------------------------------------------------------------------ */
+
+void setup()
+{
+	Serial.begin(115200);
+	delay(10);
+
+	initSensors();
+
+	deviceState = DEVICE_STATE_INIT;
+	LoRaWAN.ifskipjoin();
+}
+
+void loop()
+{
+	switch (deviceState) {
+		case DEVICE_STATE_INIT: {
+#if (LORAWAN_DEVEUI_AUTO)
+			LoRaWAN.generateDeveuiByChipID();
+#endif
+			LoRaWAN.init(loraWanClass, loraWanRegion);
+			LoRaWAN.setDefaultDR(3);
+			break;
+		}
+		case DEVICE_STATE_JOIN: {
+			LoRaWAN.join();
+			break;
+		}
+		case DEVICE_STATE_SEND: {
+			prepareTxFrame(appPort);
+			LoRaWAN.send();
+			deviceState = DEVICE_STATE_CYCLE;
+			break;
+		}
+		case DEVICE_STATE_CYCLE: {
+			/* Schedule next uplink, with a small random jitter (0..1 s). */
+			txDutyCycleTime = appTxDutyCycle + randr(0, 1000);
+			LoRaWAN.cycle(txDutyCycleTime);
+			deviceState = DEVICE_STATE_SLEEP;
+			break;
+		}
+		case DEVICE_STATE_SLEEP: {
+			LoRaWAN.sleep(loraWanClass);
+			break;
+		}
+		default: {
+			deviceState = DEVICE_STATE_INIT;
+			break;
+		}
+	}
 }
