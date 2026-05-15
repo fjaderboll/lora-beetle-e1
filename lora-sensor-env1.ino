@@ -2,8 +2,8 @@
  * LoRa environment sensor (CubeCell HTCC-AB01)
  *
  * Sensors:
- *   - BME280 (I2C) : temperature, humidity, pressure
- *   - BH1750  (I2C): ambient light (lux)
+ *   - BME280 (I2C): temperature, humidity, pressure
+ *   - BH1750 (I2C): ambient light (lux)
  *
  * Behaviour:
  *   - OTAA join on power-up
@@ -54,7 +54,9 @@ bool overTheAirActivation      = true;
 bool loraWanAdr                = true;
 
 /* Keep network state between deep-sleep cycles
- * (so we don't have to re-join on every wake-up). */
+ * (so we don't have to re-join on every wake-up).
+ * NOTE: temporarily set to false while debugging join failures so
+ * the device always performs a fresh OTAA join. */
 bool keepNet                   = true;
 
 /* Unconfirmed uplinks (saves airtime / battery). */
@@ -135,6 +137,8 @@ static void prepareTxFrame(uint8_t port)
 {
 	(void)port;
 
+	initSensors();
+
 	float tempC      = 0.0f;
 	float humidity   = 0.0f;
 	float pressureHp = 0.0f;
@@ -149,12 +153,10 @@ static void prepareTxFrame(uint8_t port)
 	}
 
 	if (lightReady) {
-		/* ONE_TIME mode: re-arm and wait for a fresh sample. */
+		/* ONE_TIME mode: re-arm and wait for a fresh sample.
+		 * High-res measurement takes ~120 ms. */
 		lightMeter.configure(BH1750::ONE_TIME_HIGH_RES_MODE);
-		uint32_t start = millis();
-		while (!lightMeter.measurementReady(true) && (millis() - start) < 200) {
-			delay(10);
-		}
+		delay(180);
 		lux = lightMeter.readLightLevel();
 		if (lux < 0) {
 			lux = 0;
@@ -174,6 +176,9 @@ static void prepareTxFrame(uint8_t port)
 	writeUint32BE(&appData[6], luxScaled);
 	appData[10] = battery;
 
+	/* Turn off Vext to save power until next cycle. */
+	digitalWrite(Vext, HIGH);
+
 	Serial.printf("T=%.2f C  RH=%.2f %%  P=%.2f hPa  L=%.2f lx  bat=%u\n",
 	              tempC, humidity, pressureHp, lux, battery);
 }
@@ -187,10 +192,9 @@ void setup()
 	Serial.begin(115200);
 	delay(10);
 
-	initSensors();
-
 	deviceState = DEVICE_STATE_INIT;
-	LoRaWAN.ifskipjoin();
+	/* Skip-join check disabled while debugging — always re-join on boot. */
+	// LoRaWAN.ifskipjoin();
 }
 
 void loop()
@@ -201,10 +205,12 @@ void loop()
 			LoRaWAN.generateDeveuiByChipID();
 #endif
 			LoRaWAN.init(loraWanClass, loraWanRegion);
-			LoRaWAN.setDefaultDR(3);
 			break;
 		}
 		case DEVICE_STATE_JOIN: {
+			Serial.printf("DevEui: %02X%02X%02X%02X%02X%02X%02X%02X\n",
+				devEui[0],devEui[1],devEui[2],devEui[3],
+				devEui[4],devEui[5],devEui[6],devEui[7]);
 			LoRaWAN.join();
 			break;
 		}
@@ -222,7 +228,7 @@ void loop()
 			break;
 		}
 		case DEVICE_STATE_SLEEP: {
-			LoRaWAN.sleep(loraWanClass);
+			LoRaWAN.sleep();
 			break;
 		}
 		default: {
