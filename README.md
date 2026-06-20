@@ -41,8 +41,8 @@
 	* `LORAWAN_NETMODE`    : `OTAA`
 	* `LORAWAN_REGION`     : `REGION_EU868` (or your region)
 	* `LORAWAN_UPLINKMODE` : `UNCONFIRMED`
-6. Fill in your `DevEUI`, `AppEUI` (a.k.a. `JoinEUI`) and `AppKey` in `keys.h`,
-   then flash the board.
+6. Compile and flash this to your device.
+7. Take note of the `ChipID` in the serial output and update the map in `keys.h` with your custom keys.
 
 ## Uplink payload
 

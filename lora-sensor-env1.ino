@@ -27,8 +27,29 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
 #include <BH1750.h>
-
 #include "keys.h"
+
+/* ------------------------------------------------------------------ */
+/* LoRaWAN keys                                                       */
+/* ------------------------------------------------------------------ */
+// OTAA credentials (overwritten in setupKeys() function)
+uint8_t devEui[8] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+uint8_t appEui[8] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+uint8_t appKey[16] = {
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
+// ABP credentials (not used when overTheAirActivation=true, but kept for CubeCell compatibility)
+uint8_t nwkSKey[] = {
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+uint8_t appSKey[] = {
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+uint32_t devAddr = 0x00000000;
 
 /* ------------------------------------------------------------------ */
 /* LoRaWAN configuration                                              */
@@ -86,6 +107,35 @@ static bool lightReady = false;
 /* ------------------------------------------------------------------ */
 /* Helpers                                                            */
 /* ------------------------------------------------------------------ */
+
+static void setupKeys()
+{
+	uint64_t chipId = getID();
+	Serial.printf("ChipID: %04X%08X\n", (uint16_t)(chipId>>32), (uint32_t)chipId);
+
+	// Look up chip ID in credential mapping
+	bool found = false;
+	for (int i = 0; i < keyMapSize; i++) {
+		if (keyMap[i].chipId == chipId) {
+			// Found matching chip ID, copy credentials
+			for (int j = 0; j < 8; j++) {
+				devEui[j] = keyMap[i].devEui[j];
+				appEui[j] = keyMap[i].appEui[j];
+			}
+			for (int j = 0; j < 16; j++) {
+				appKey[j] = keyMap[i].appKey[j];
+			}
+			found = true;
+			break;
+		}
+	}
+	
+	// If not found in mapping, use default generated DevEUI from chip ID
+	if (!found) {
+		Serial.println("Chip ID not in mapping, using generated DevEUI");
+		LoRaWAN.generateDeveuiByChipID();
+	}
+}
 
 static void initSensors()
 {
@@ -191,6 +241,8 @@ void setup()
 {
 	Serial.begin(115200);
 	delay(10);
+
+	setupKeys();
 
 	deviceState = DEVICE_STATE_INIT;
 	/* Skip-join check disabled while debugging — always re-join on boot. */
