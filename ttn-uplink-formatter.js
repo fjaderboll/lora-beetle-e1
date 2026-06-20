@@ -38,11 +38,11 @@ function decodeUplink(input) {
 
   return {
     data: {
-      temperature: temperature / 100.0,
-      humidity: humidityRaw / 100.0,
-      pressure: pressureRaw / 10.0,
-      light: lightRaw / 100.0,
-      battery
+      temperature: temperature / 100.0, // °C
+      humidity: humidityRaw / 100.0, // %RH
+      pressure: pressureRaw / 10.0, // hPa
+      light: lightRaw / 100.0, // lux
+      batteryLevel: battery // 0=external power, 1-254=0-100%, 255=N/A
     },
     warnings,
     errors
