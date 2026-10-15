@@ -10,7 +10,8 @@ struct KeyMapping {
 	uint8_t appKey[16];
 };
 
-// add entries for each device
+// add entries for each device if you wish to use
+// custom keys not based on chip ID.
 static const KeyMapping keyMap[] = {
 	{
 		.chipId = 0x0000000000000001,

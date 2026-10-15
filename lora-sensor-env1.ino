@@ -137,13 +137,23 @@ static void setupKeys()
 	}
 }
 
-static void initSensors()
-{
+static void turnSensorPowerOn() {
 	/* CubeCell powers external 3V3 (sensors) via the Vext pin. */
 	pinMode(Vext, OUTPUT);
 	digitalWrite(Vext, LOW);   // LOW = Vext ON
-	delay(10);
+	delay(50); // wait for sensors to wake up
+	Serial.println("Vext is on");
+}
 
+static void turnSensorPowerOff() {
+	/* Turn off Vext to save power until next cycle. */
+	digitalWrite(Vext, HIGH);
+	Serial.println("Vext is off");
+}
+
+static void initSensors()
+{
+	turnSensorPowerOn();
 	Wire.begin();
 
 	/* BME280 default I2C address is 0x76, fall back to 0x77. */
@@ -226,11 +236,10 @@ static void prepareTxFrame(uint8_t port)
 	writeUint32BE(&appData[6], luxScaled);
 	appData[10] = battery;
 
-	/* Turn off Vext to save power until next cycle. */
-	digitalWrite(Vext, HIGH);
-
 	Serial.printf("T=%.2f C  RH=%.2f %%  P=%.2f hPa  L=%.2f lx  bat=%u\n",
 	              tempC, humidity, pressureHp, lux, battery);
+	
+	turnSensorPowerOff();
 }
 
 /* ------------------------------------------------------------------ */

@@ -13,7 +13,7 @@
 * Weather proof case
 
 ## Hardware components
-* [CubeCell HTCC-AB01](https://docs.heltec.cn/en/node/asr650x/htcc_ab01/) with antenna
+* [CubeCell HTCC-AB01_V2](https://docs.heltec.cn/en/node/asr650x/htcc_ab01/) with antenna
 * BME280 (temperature, humidity, pressure sensor)
 * BH1750 (light sensor)
 * Lithium-ion battery 3.7V
@@ -29,7 +29,7 @@
 2. Setup *Arduino IDE*: https://docs.heltec.org/en/node/asr650x/asr650x_general_docs/quick_start/index.html
 	1. Go to *File* -> *Preferences* -> *Additional boards manager URLs* and add `https://github.com/HelTecAutomation/CubeCell-Arduino/releases/download/V1.7.1/package_CubeCell_index.json`
 	2. In *Board manager*, install *CubeCell Development Framework*
-3. Open this project and select board `CubeCell-Board (HTCC-AB01)` (use V2 if your CubeCell has a USB-C)
+3. Open this project and select board `CubeCell-Board (HTCC-AB01-V2)`
 4. Install the following libraries via the Arduino *Library Manager*:
 	* `Adafruit BME280 Library` (pulls in `Adafruit Unified Sensor`)
 	* `BH1750` by Christopher Laws
