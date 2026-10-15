@@ -29,10 +29,18 @@
 #include <BH1750.h>
 #include "keys.h"
 
+// Fallbacks for keys.h files predating the defaults
+#ifndef DEFAULT_APP_EUI
+#define DEFAULT_APP_EUI { 0 }
+#endif
+#ifndef DEFAULT_APP_KEY
+#define DEFAULT_APP_KEY { 0 }
+#endif
+
 /* ------------------------------------------------------------------ */
 /* LoRaWAN keys                                                       */
 /* ------------------------------------------------------------------ */
-// OTAA credentials (overwritten in setupKeys() function)
+// OTAA credentials (don't modify here, go to keys.h)
 uint8_t devEui[8] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 uint8_t appEui[8] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 uint8_t appKey[16] = {
@@ -108,32 +116,63 @@ static bool lightReady = false;
 /* Helpers                                                            */
 /* ------------------------------------------------------------------ */
 
+static bool isAllZero(const uint8_t *buf, int len)
+{
+	for (int i = 0; i < len; i++) {
+		if (buf[i] != 0) {
+			return false;
+		}
+	}
+	return true;
+}
+
+static void printHex(const char *label, const uint8_t *buf, int len)
+{
+	Serial.print(label);
+	for (int i = 0; i < len; i++) {
+		Serial.printf("%02X", buf[i]);
+	}
+	Serial.println();
+}
+
+/* Resolve credentials per field: keyMap entry -> default (see keys.h). */
 static void setupKeys()
 {
 	uint64_t chipId = getID();
 	Serial.printf("ChipID: %04X%08X\n", (uint16_t)(chipId>>32), (uint32_t)chipId);
 
-	// Look up chip ID in credential mapping
-	bool found = false;
+	// Defaults
+	static const uint8_t defaultAppEui[8] = DEFAULT_APP_EUI;
+	static const uint8_t defaultAppKey[16] = DEFAULT_APP_KEY;
+	LoRaWAN.generateDeveuiByChipID();
+	memcpy(appEui, defaultAppEui, sizeof(appEui));
+	memcpy(appKey, defaultAppKey, sizeof(appKey));
+
+	// Per-device overrides, all-zero fields are left at their defaults
 	for (int i = 0; i < keyMapSize; i++) {
-		if (keyMap[i].chipId == chipId) {
-			// Found matching chip ID, copy credentials
-			for (int j = 0; j < 8; j++) {
-				devEui[j] = keyMap[i].devEui[j];
-				appEui[j] = keyMap[i].appEui[j];
-			}
-			for (int j = 0; j < 16; j++) {
-				appKey[j] = keyMap[i].appKey[j];
-			}
-			found = true;
-			break;
+		const KeyMapping *k = &keyMap[i];
+		if (k->chipId != chipId) {
+			continue;
 		}
+		Serial.println("Chip ID found in key map");
+		if (!isAllZero(k->devEui, sizeof(k->devEui))) {
+			memcpy(devEui, k->devEui, sizeof(devEui));
+		}
+		if (!isAllZero(k->appEui, sizeof(k->appEui))) {
+			memcpy(appEui, k->appEui, sizeof(appEui));
+		}
+		if (!isAllZero(k->appKey, sizeof(k->appKey))) {
+			memcpy(appKey, k->appKey, sizeof(appKey));
+		}
+		break;
 	}
-	
-	// If not found in mapping, use default generated DevEUI from chip ID
-	if (!found) {
-		Serial.println("Chip ID not in mapping, using generated DevEUI");
-		LoRaWAN.generateDeveuiByChipID();
+
+	printHex("DevEUI: ", devEui, sizeof(devEui));
+	printHex("AppEUI: ", appEui, sizeof(appEui));
+	printHex("AppKey: ", appKey, sizeof(appKey));
+
+	if (isAllZero(appKey, sizeof(appKey))) {
+		Serial.println("WARNING: AppKey is all zeros, set DEFAULT_APP_KEY or a per-device appKey in keys.h");
 	}
 }
 
@@ -262,9 +301,6 @@ void loop()
 {
 	switch (deviceState) {
 		case DEVICE_STATE_INIT: {
-#if (LORAWAN_DEVEUI_AUTO)
-			LoRaWAN.generateDeveuiByChipID();
-#endif
 			LoRaWAN.init(loraWanClass, loraWanRegion);
 			break;
 		}

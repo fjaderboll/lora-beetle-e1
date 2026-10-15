@@ -22,10 +22,11 @@
 * Case
 
 ## Software setup
-1. Create your own set of keys:
+1. Create local key file:
 	```shell
 	cp keys.h.default keys.h
 	```
+	Updating this file is optional, but recommended, see *Keys* section below.
 2. Setup *Arduino IDE*: https://docs.heltec.org/en/node/asr650x/asr650x_general_docs/quick_start/index.html
 	1. Go to *File* -> *Preferences* -> *Additional boards manager URLs* and add `https://github.com/HelTecAutomation/CubeCell-Arduino/releases/download/V1.7.1/package_CubeCell_index.json`
 	2. In *Board manager*, install *CubeCell Development Framework*
@@ -42,7 +43,22 @@
 	* `LORAWAN_REGION`     : `REGION_EU868` (or your region)
 	* `LORAWAN_UPLINKMODE` : `UNCONFIRMED`
 6. Compile and flash this to your device.
-7. Take note of the `ChipID` in the serial output and update the map in `keys.h` with your custom keys.
+7. Take note of the `ChipID`, `DevEUI`, `AppEUI` and `AppKey` in the serial output and register the device in TTN.
+
+### Keys
+Credentials are resolved per field in `keys.h`:
+
+| Field  | Per-device `keyMap` entry | Fallback                   |
+|--------|---------------------------|----------------------------|
+| DevEUI | `devEui`                  | generated from the chip ID |
+| AppEUI | `appEui`                  | `DEFAULT_APP_EUI`          |
+| AppKey | `appKey`                  | `DEFAULT_APP_KEY`          |
+
+Omitted or all-zero fields in a `keyMap` entry fall back to the right column.
+Typical setups:
+* **Shared key:** set `DEFAULT_APP_KEY` and leave `keyMap` empty.
+* **Unique key per device (recommended):** add a `keyMap` entry per `ChipID` with only `appKey` set.
+* **Fully custom:** set `devEui`, `appEui` and `appKey` in the entry.
 
 ## Uplink payload
 

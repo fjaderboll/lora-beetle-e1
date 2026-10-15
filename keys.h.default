@@ -3,6 +3,23 @@
 
 #include <stdint.h>
 
+// Credentials resolve per field, in this order:
+//   DevEUI: keyMap entry -> generated from chip ID
+//   AppEUI: keyMap entry -> DEFAULT_APP_EUI
+//   AppKey: keyMap entry -> DEFAULT_APP_KEY
+// An omitted or all-zero field in a keyMap entry means "use the fallback".
+
+// AppEUI (aka JoinEUI) shared by all your devices.
+#define DEFAULT_APP_EUI { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
+
+// AppKey shared by all devices without their own appKey below.
+// Leave as zeros if every device has its own appKey.
+// A warning is printed at boot if the resulting AppKey is all zeros.
+#define DEFAULT_APP_KEY { \
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, \
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 \
+}
+
 struct KeyMapping {
 	uint64_t chipId;
 	uint8_t devEui[8];
@@ -10,18 +27,18 @@ struct KeyMapping {
 	uint8_t appKey[16];
 };
 
-// add entries for each device if you wish to use
-// custom keys not based on chip ID.
+// Optional per-device overrides, matched on the ChipID printed at boot.
+// Fields must be given in declaration order; omitted fields are zero.
 static const KeyMapping keyMap[] = {
+	// Own AppKey, generated DevEUI, default AppEUI (recommended)
 	{
 		.chipId = 0x0000000000000001,
-		.devEui = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
-		.appEui = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
 		.appKey = {
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 		}
 	},
+	// Fully custom
 	{
 		.chipId = 0x0000000000000002,
 		.devEui = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
