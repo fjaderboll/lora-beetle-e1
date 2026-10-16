@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="560" viewBox="0 0 940 560" font-family="Helvetica, Arial, sans-serif">
+  <style>
+    .box   { fill: #f7f7f4; stroke: #222; stroke-width: 2; }
+    .pin   { stroke: #222; stroke-width: 1.5; }
+    .title { font-size: 15px; font-weight: bold; fill: #222; }
+    .sub   { font-size: 11px; fill: #555; }
+    .pl    { font-size: 12px; fill: #222; }
+    .pn    { font-size: 10px; fill: #666; }
+    .net   { font-size: 11px; font-weight: bold; }
+    .nc    { stroke: #888; stroke-width: 1.5; }
+    .w     { fill: none; stroke-width: 2.2; stroke-linejoin: round; }
+    .v33   { stroke: #d32f2f; } .t33 { fill: #d32f2f; }
+    .gnd   { stroke: #222; }    .tgnd { fill: #222; }
+    .scl   { stroke: #2e7d32; } .tscl { fill: #2e7d32; }
+    .sda   { stroke: #1565c0; } .tsda { fill: #1565c0; }
+    .bat   { stroke: #d32f2f; }
+  </style>
+
+  <rect width="940" height="560" fill="#ffffff"/>
+
+  <!-- ============ Battery ============ -->
+  <g>
+    <rect class="box" x="30" y="170" width="120" height="170" rx="6" stroke-dasharray="6 4"/>
+    <text class="title" x="90" y="160" text-anchor="middle">BT1</text>
+    <text class="sub" x="90" y="358" text-anchor="middle">Li-ion 3.7 V</text>
+    <text class="sub" x="90" y="372" text-anchor="middle">in battery holder</text>
+    <!-- cell symbol -->
+    <line class="pin" x1="90" y1="200" x2="90" y2="240"/>
+    <line x1="65" y1="240" x2="115" y2="240" stroke="#222" stroke-width="3"/>
+    <line x1="77" y1="252" x2="103" y2="252" stroke="#222" stroke-width="5"/>
+    <line x1="65" y1="264" x2="115" y2="264" stroke="#222" stroke-width="3"/>
+    <line x1="77" y1="276" x2="103" y2="276" stroke="#222" stroke-width="5"/>
+    <line class="pin" x1="90" y1="276" x2="90" y2="310"/>
+    <text class="pl" x="120" y="236">+</text>
+    <text class="pl" x="120" y="290">−</text>
+  </g>
+  <!-- battery wires -->
+  <polyline class="w bat" points="90,200 90,190 190,190 190,230 262,230"/>
+  <polyline class="w gnd" points="90,310 90,320 190,320 190,290 262,290"/>
+  <!-- JST connector -->
+  <rect x="200" y="215" width="22" height="90" fill="#fff" stroke="#222" stroke-width="1.5"/>
+  <text class="pn" x="197" y="208">JST 1.25</text>
+  <circle cx="211" cy="230" r="3" fill="#222"/>
+  <circle cx="211" cy="290" r="3" fill="#222"/>
+
+  <!-- ============ CubeCell ============ -->
+  <g>
+    <rect class="box" x="262" y="90" width="210" height="330" rx="6"/>
+    <text class="title" x="367" y="114" text-anchor="middle">U1  CubeCell HTCC-AB01 V2</text>
+    <text class="sub" x="367" y="390" text-anchor="middle">ASR6502 · LoRaWAN</text>
+    <text class="sub" x="367" y="405" text-anchor="middle">USB-C: power / charging / serial</text>
+
+    <!-- antenna -->
+    <line class="pin" x1="367" y1="90" x2="367" y2="40"/>
+    <polyline fill="none" stroke="#222" stroke-width="1.5" points="352,22 367,40 382,22"/>
+    <line class="pin" x1="367" y1="22" x2="367" y2="40"/>
+    <text class="pn" x="390" y="36">LoRa antenna (u.FL)</text>
+
+    <!-- battery connector pins (left) -->
+    <text class="pl" x="272" y="234">BAT+</text>
+    <text class="pl" x="272" y="294">BAT−</text>
+    <text class="pn" x="272" y="318">battery connector</text>
+
+    <!-- header J2 pins (right) -->
+    <text class="pn" x="462" y="142" text-anchor="end">Header J2</text>
+    <text class="pl" x="462" y="164" text-anchor="end">Ve (Vext)</text>
+    <text class="pl" x="462" y="204" text-anchor="end">SCL</text>
+    <text class="pl" x="462" y="244" text-anchor="end">SDA</text>
+    <text class="pl" x="462" y="284" text-anchor="end">GND</text>
+    <line class="pin" x1="472" y1="160" x2="500" y2="160"/>
+    <line class="pin" x1="472" y1="200" x2="500" y2="200"/>
+    <line class="pin" x1="472" y1="240" x2="500" y2="240"/>
+    <line class="pin" x1="472" y1="280" x2="500" y2="280"/>
+    <text class="pn" x="486" y="155" text-anchor="middle">4</text>
+    <text class="pn" x="486" y="195" text-anchor="middle">6</text>
+    <text class="pn" x="486" y="235" text-anchor="middle">7</text>
+    <text class="pn" x="486" y="275" text-anchor="middle">1</text>
+  </g>
+
+  <!-- ============ BME280 ============ -->
+  <g>
+    <rect class="box" x="720" y="70" width="180" height="180" rx="6"/>
+    <text class="title" x="810" y="60" text-anchor="middle">U2  BME280</text>
+    <text class="sub" x="810" y="210" text-anchor="middle">GY-BME280 module</text>
+    <text class="sub" x="810" y="225" text-anchor="middle">temp / humidity / pressure</text>
+    <text class="sub" x="810" y="240" text-anchor="middle">I²C 0x76 or 0x77</text>
+    <line class="pin" x1="700" y1="90"  x2="720" y2="90"/>
+    <line class="pin" x1="700" y1="115" x2="720" y2="115"/>
+    <line class="pin" x1="700" y1="140" x2="720" y2="140"/>
+    <line class="pin" x1="700" y1="165" x2="720" y2="165"/>
+    <text class="pl" x="728" y="94">VCC</text>
+    <text class="pl" x="728" y="119">GND</text>
+    <text class="pl" x="728" y="144">SCL</text>
+    <text class="pl" x="728" y="169">SDA</text>
+    <!-- NC pins -->
+    <line class="pin" x1="900" y1="90"  x2="920" y2="90"/>
+    <line class="pin" x1="900" y1="115" x2="920" y2="115"/>
+    <path class="nc" d="M914,84 l12,12 M926,84 l-12,12 M914,109 l12,12 M926,109 l-12,12"/>
+    <text class="pl" x="892" y="94"  text-anchor="end">CSB</text>
+    <text class="pl" x="892" y="119" text-anchor="end">SDO</text>
+  </g>
+
+  <!-- ============ BH1750 ============ -->
+  <g>
+    <rect class="box" x="720" y="290" width="180" height="170" rx="6"/>
+    <text class="title" x="810" y="280" text-anchor="middle">U3  BH1750</text>
+    <text class="sub" x="810" y="435" text-anchor="middle">GY-302 module · light</text>
+    <text class="sub" x="810" y="450" text-anchor="middle">I²C 0x23 (ADDR low)</text>
+    <line class="pin" x1="700" y1="310" x2="720" y2="310"/>
+    <line class="pin" x1="700" y1="335" x2="720" y2="335"/>
+    <line class="pin" x1="700" y1="360" x2="720" y2="360"/>
+    <line class="pin" x1="700" y1="385" x2="720" y2="385"/>
+    <line class="pin" x1="700" y1="410" x2="720" y2="410"/>
+    <text class="pl" x="728" y="314">VCC</text>
+    <text class="pl" x="728" y="339">GND</text>
+    <text class="pl" x="728" y="364">SCL</text>
+    <text class="pl" x="728" y="389">SDA</text>
+    <text class="pl" x="728" y="414">ADDR</text>
+    <path class="nc" d="M694,404 l12,12 M706,404 l-12,12"/>
+  </g>
+
+  <!-- ============ Nets ============ -->
+  <!-- Vext (switched 3.3 V) -->
+  <polyline class="w v33" points="500,160 560,160"/>
+  <polyline class="w v33" points="700,90 560,90 560,310 700,310"/>
+  <circle cx="560" cy="160" r="4" class="t33"/>
+  <text class="net t33" x="506" y="154">VEXT</text>
+  <!-- SCL -->
+  <polyline class="w scl" points="500,200 590,200"/>
+  <polyline class="w scl" points="700,140 590,140 590,360 700,360"/>
+  <circle cx="590" cy="200" r="4" class="tscl"/>
+  <text class="net tscl" x="506" y="194">SCL</text>
+  <!-- SDA -->
+  <polyline class="w sda" points="500,240 620,240"/>
+  <polyline class="w sda" points="700,165 620,165 620,385 700,385"/>
+  <circle cx="620" cy="240" r="4" class="tsda"/>
+  <text class="net tsda" x="506" y="234">SDA</text>
+  <!-- GND -->
+  <polyline class="w gnd" points="500,280 650,280"/>
+  <polyline class="w gnd" points="700,115 650,115 650,335 700,335"/>
+  <circle cx="650" cy="280" r="4" class="tgnd"/>
+  <text class="net tgnd" x="506" y="274">GND</text>
+
+  <!-- ============ Legend / title block ============ -->
+  <g>
+    <rect x="30" y="470" width="460" height="70" fill="none" stroke="#bbb"/>
+    <line class="w v33" x1="45" y1="490" x2="75" y2="490"/><text class="pl" x="82" y="494">Vext</text>
+    <line class="w gnd" x1="135" y1="490" x2="165" y2="490"/><text class="pl" x="172" y="494">GND</text>
+    <line class="w scl" x1="225" y1="490" x2="255" y2="490"/><text class="pl" x="262" y="494">SCL</text>
+    <line class="w sda" x1="315" y1="490" x2="345" y2="490"/><text class="pl" x="352" y="494">SDA</text>
+    <circle cx="50" cy="520" r="4" fill="#222"/><text class="pl" x="62" y="524">junction</text>
+    <path class="nc" d="M129,514 l12,12 M141,514 l-12,12"/><text class="pl" x="150" y="524">not connected</text>
+    <text class="pn" x="290" y="524">crossing wires without dot are not joined</text>
+
+    <rect x="520" y="470" width="400" height="70" fill="none" stroke="#bbb"/>
+    <text class="title" x="535" y="495">LoRa environment sensor (env1): wiring</text>
+    <text class="sub" x="535" y="515">Sensors share the I²C bus, powered from switched Vext (J2 pin 4)</text>
+    <text class="sub" x="535" y="530">Rev 2 · 2026-10-16</text>
+  </g>
+</svg>

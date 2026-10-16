@@ -79,7 +79,7 @@ LoRaMacRegion_t loraWanRegion = ACTIVE_REGION;
 DeviceClass_t  loraWanClass    = CLASS_A;
 
 /* Uplink interval: 15 minutes (in milliseconds). */
-uint32_t appTxDutyCycle        = 1 * 60 * 1000;
+uint32_t appTxDutyCycle        = 15 * 60 * 1000;
 
 /* OTAA activation. */
 bool overTheAirActivation      = true;

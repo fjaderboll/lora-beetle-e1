@@ -18,7 +18,7 @@
 * BH1750 (light sensor)
 * Lithium-ion battery 3.7V
 * Battery holder
-* Circuit board
+* [Circuit board](board/README.md)
 * Case
 
 ## Software setup
