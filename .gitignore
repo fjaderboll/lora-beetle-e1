@@ -1,2 +1,5 @@
 /keys.h
 /temp/
+*.kicad_prl
+*-backups/
+fp-info-cache

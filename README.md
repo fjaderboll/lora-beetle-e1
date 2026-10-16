@@ -16,7 +16,7 @@
 * [CubeCell HTCC-AB01_V2](https://docs.heltec.cn/en/node/asr650x/htcc_ab01/) with antenna
 * BME280 (temperature, humidity, pressure sensor)
 * BH1750 (light sensor)
-* Lithium-ion battery 3.7V
+* Lithium-ion battery 3.7V (18650)
 * Battery holder
 * [Circuit board](board/README.md)
 * Case
