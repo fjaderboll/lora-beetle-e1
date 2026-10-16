@@ -9,6 +9,10 @@
  *   - OTAA join on power-up
  *   - Every APP_TX_DUTYCYCLE (15 min) wake up, read sensors,
  *     transmit an uplink, then go back to deep sleep.
+ *   - Pressing the USER button sends an extra uplink right away
+ *     and restarts the interval. The RGB LED blinks blue to
+ *     confirm the press, or red if it is ignored (an uplink is already
+ *     pending, or the device hasn't joined yet).
  *
  * Region / sub-band must be selected in the Arduino IDE
  *   "Tools" menu (LoRaWAN Region, Class, etc.).
@@ -27,6 +31,7 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
 #include <BH1750.h>
+#include <CubeCell_NeoPixel.h>
 #include "keys.h"
 
 // Fallbacks for keys.h files predating the defaults
@@ -74,7 +79,7 @@ LoRaMacRegion_t loraWanRegion = ACTIVE_REGION;
 DeviceClass_t  loraWanClass    = CLASS_A;
 
 /* Uplink interval: 15 minutes (in milliseconds). */
-uint32_t appTxDutyCycle        = 15 * 60 * 1000;
+uint32_t appTxDutyCycle        = 1 * 60 * 1000;
 
 /* OTAA activation. */
 bool overTheAirActivation      = true;
@@ -111,6 +116,70 @@ static BH1750          lightMeter;
 
 static bool bmeReady   = false;
 static bool lightReady = false;
+
+/* ------------------------------------------------------------------ */
+/* User button                                                        */
+/* ------------------------------------------------------------------ */
+
+/* USER_KEY (P3_3) has an external pull-up; pressing pulls it low. */
+static volatile bool buttonPressed = false;
+static bool sendPending = false;   // press accepted, waiting for the MAC
+
+static void onButtonPress()
+{
+	buttonPressed = true;
+}
+
+static void attachButton()
+{
+	pinMode(USER_KEY, INPUT);
+	attachInterrupt(USER_KEY, onButtonPress, FALLING);
+}
+
+/* Wait for release so contact bounce isn't seen as another press. */
+static void waitForButtonRelease()
+{
+	uint32_t start = millis();
+	while (digitalRead(USER_KEY) == LOW && millis() - start < 2000) {
+		delay(10);
+	}
+	delay(50);
+	buttonPressed = false;
+}
+
+/* The onboard RGB LED is powered from Vext, like the sensors. Blink it
+ * before measuring so it doesn't affect the BH1750 light reading. */
+static CubeCell_NeoPixel statusLed(1, RGB, NEO_GRB + NEO_KHZ800);
+
+#define LED_SENDING  0x000040   // blue: uplink will be sent
+#define LED_IGNORED  0x400000   // red: press ignored (busy or not joined)
+
+static void blinkLed(uint32_t color)
+{
+	pinMode(Vext, OUTPUT);
+	digitalWrite(Vext, LOW);   // LOW = Vext ON
+	delay(5);
+	statusLed.begin();
+	statusLed.setPixelColor(0, color);
+	statusLed.show();
+	delay(200);
+	statusLed.clear();
+	statusLed.show();
+	digitalWrite(Vext, HIGH);
+}
+
+/* USER_KEY doubles as VBAT_ADC_CTL, which the battery measurement drives
+ * low. Detach the button while measuring so it doesn't look like a press. */
+static uint8_t readBatteryLevel()
+{
+	detachInterrupt(USER_KEY);
+	uint8_t level = BoardGetBatteryLevel();
+	attachButton();
+	/* Also covers a real press that was still pending: this uplink serves it. */
+	buttonPressed = false;
+	sendPending = false;
+	return level;
+}
 
 /* ------------------------------------------------------------------ */
 /* Helpers                                                            */
@@ -266,7 +335,7 @@ static void prepareTxFrame(uint8_t port)
 	uint16_t humScaled   = (uint16_t)lroundf(humidity * 100.0f);
 	uint16_t pressScaled = (uint16_t)lroundf(pressureHp * 10.0f);
 	uint32_t luxScaled   = (uint32_t)lroundf(lux * 100.0f);
-	uint8_t  battery     = BoardGetBatteryLevel();
+	uint8_t  battery     = readBatteryLevel();
 
 	appDataSize = 11;
 	writeUint16BE(&appData[0], (uint16_t)tempScaled);
@@ -291,6 +360,7 @@ void setup()
 	delay(10);
 
 	setupKeys();
+	attachButton();
 
 	deviceState = DEVICE_STATE_INIT;
 	/* Skip-join check disabled while debugging — always re-join on boot. */
@@ -325,6 +395,27 @@ void loop()
 			break;
 		}
 		case DEVICE_STATE_SLEEP: {
+			if (buttonPressed) {
+				if (IsLoRaMacNetworkJoined && !sendPending) {
+					Serial.println("Button pressed, sending uplink");
+					blinkLed(LED_SENDING);
+					sendPending = true;
+				} else {
+					Serial.println("Button pressed, ignored");
+					blinkLed(LED_IGNORED);
+				}
+				waitForButtonRelease();
+			}
+			/* The previous uplink may still be in progress (RX windows,
+			 * duty-cycle delay); LoRaWAN.send() silently drops the frame
+			 * then. Keep the press pending, the MAC timers wake us up. */
+			if (sendPending && LoRaMacState == LORAMAC_IDLE) {
+				sendPending = false;
+				deviceState = DEVICE_STATE_SEND;
+				break;
+			}
+			/* Let the UART drain, deep sleep cuts off pending output. */
+			Serial.flush();
 			LoRaWAN.sleep();
 			break;
 		}
