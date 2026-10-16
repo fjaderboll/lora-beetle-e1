@@ -180,11 +180,15 @@ static void turnSensorPowerOn() {
 	/* CubeCell powers external 3V3 (sensors) via the Vext pin. */
 	pinMode(Vext, OUTPUT);
 	digitalWrite(Vext, LOW);   // LOW = Vext ON
-	delay(50); // wait for sensors to wake up
+	delay(100); // wait for Vext to settle and sensors to boot
 	Serial.println("Vext is on");
+	Wire.begin();
 }
 
 static void turnSensorPowerOff() {
+	/* Release the I2C bus first so SDA/SCL don't back-power the
+	 * sensors through their pull-ups while Vext is off. */
+	Wire.end();
 	/* Turn off Vext to save power until next cycle. */
 	digitalWrite(Vext, HIGH);
 	Serial.println("Vext is off");
@@ -193,13 +197,9 @@ static void turnSensorPowerOff() {
 static void initSensors()
 {
 	turnSensorPowerOn();
-	Wire.begin();
 
 	/* BME280 default I2C address is 0x76, fall back to 0x77. */
-	bmeReady = bme.begin(0x76, &Wire);
-	if (!bmeReady) {
-		bmeReady = bme.begin(0x77, &Wire);
-	}
+	bmeReady = bme.begin(0x76, &Wire) || bme.begin(0x77, &Wire);
 	if (bmeReady) {
 		/* Weather-station preset: 1x oversampling, forced mode, filter off. */
 		bme.setSampling(Adafruit_BME280::MODE_FORCED,
