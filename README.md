@@ -1,7 +1,9 @@
 > [!NOTE]
-> Work in progress, check back regularly for updates.
+> Work in progress, check back regularly for updates. Current [prototype](doc/prototype.md).
 
 # Beetle E1 - LoRa environment sensor
+
+<img src="doc/prototype-top.jpg" align="right">
 
 * LoRaWAN implementation
 * Measures:
