@@ -74,9 +74,9 @@ Assembly notes:
 
 ### Ordering from PCBWay
 
-Upload [`pcb/env1-gerbers.zip`](pcb/env1-gerbers.zip). The defaults work:
-2 layers, 1.6 mm FR-4, 1 oz copper, HASL, no stencil. Minimum track and gap is
-0.25 mm, and the smallest hole is the 0.4 mm via.
+Upload [`pcb/lora-beetle-e1-gerbers.zip`](pcb/lora-beetle-e1-gerbers.zip).
+The defaults work: 2 layers, 1.6 mm FR-4, 1 oz copper, HASL, no stencil.
+Minimum track and gap is 0.25 mm, and the smallest hole is the 0.4 mm via.
 
 ### Editing
 
@@ -88,8 +88,8 @@ board/pcb/build.sh
 ```
 
 This needs Docker; it runs KiCad 9 from the `kicad/kicad` image. It rebuilds
-`env1.kicad_pcb`, runs DRC, and exports the Gerbers, drill file, zip and the
-renders in `images/`. You can open `pcb/env1.kicad_pro` in KiCad 9 to inspect
-the board.
+`lora-beetle-e1.kicad_pcb`, runs DRC, and exports the Gerbers, drill file, zip
+and the renders in `images/`. You can open `pcb/lora-beetle-e1.kicad_pro` in
+KiCad 9 to inspect the board.
 
 ![Carrier board, 3D view](images/pcb-3d.png)

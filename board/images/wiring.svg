@@ -155,7 +155,7 @@
     <text class="pn" x="290" y="524">crossing wires without dot are not joined</text>
 
     <rect x="520" y="470" width="400" height="70" fill="none" stroke="#bbb"/>
-    <text class="title" x="535" y="495">LoRa environment sensor (env1): wiring</text>
+    <text class="title" x="535" y="495">lora-beetle-e1: wiring</text>
     <text class="sub" x="535" y="515">Sensors share the I²C bus, powered from switched Vext (J2 pin 4)</text>
     <text class="sub" x="535" y="530">Rev 3 · 2026-10-16</text>
   </g>

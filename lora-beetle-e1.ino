@@ -1,5 +1,5 @@
 /*
- * LoRa environment sensor (CubeCell HTCC-AB01)
+ * lora-beetle-e1: LoRa environment sensor (CubeCell HTCC-AB01)
  *
  * Sensors:
  *   - BME280 (I2C): temperature, humidity, pressure

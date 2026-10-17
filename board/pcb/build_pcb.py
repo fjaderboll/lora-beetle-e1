@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Generate the env1 carrier board (env1.kicad_pcb) with the KiCad pcbnew API.
+"""Generate the lora-beetle-e1 carrier board (lora-beetle-e1.kicad_pcb) with
+the KiCad pcbnew API.
 
 Run inside a KiCad container, e.g.:
     docker run --rm -v "$PWD":/work -w /work/board/pcb kicad/kicad:9.0.4 \
@@ -13,7 +14,7 @@ import pcbnew
 from pcbnew import VECTOR2I, FromMM
 
 FP = "/usr/share/kicad/footprints"
-OUT = "env1.kicad_pcb"
+OUT = "lora-beetle-e1.kicad_pcb"
 
 W, H = 56.0, 101.0          # board size
 CORNER = 3.0                # board corner radius
@@ -52,9 +53,9 @@ def pt(x, y):
 board = pcbnew.BOARD()
 board.SetCopperLayerCount(2)
 tb = board.GetTitleBlock()
-tb.SetTitle("LoRa environment sensor (env1) carrier board")
+tb.SetTitle("lora-beetle-e1 carrier board")
 tb.SetRevision("1")
-tb.SetDate("2026-10-16")
+tb.SetDate("2026-10-17")
 
 nets = {}
 for name in ("GND", "VEXT", "SCL", "SDA", "BAT+", "BAT-"):
@@ -314,9 +315,9 @@ sensor_labels(bh, BH_Y, ("VCC", "GND", "SCL", "SDA", "ADDR"),
 
 # Back side: identification
 B = pcbnew.B_SilkS
-text("lora-sensor-env1", W / 2, 40, 2.0, B, bold=True)
+text("lora-beetle-e1", W / 2, 40, 2.0, B, bold=True)
 text("carrier board rev 1", W / 2, 44, 1.2, B)
-text("2026-10-16", W / 2, 46.5, 1.0, B)
+text("2026-10-17", W / 2, 46.5, 1.0, B)
 
 # ------------------------------------------------------------------ fill
 # Filling a board that was built in memory crashes; reload it from disk first.

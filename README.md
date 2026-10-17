@@ -1,7 +1,7 @@
 > [!NOTE]
 > Work in progress, check back regularly for updates.
 
-# LoRa environment sensor
+# Beetle E1 - LoRa environment sensor
 
 * LoRaWAN implementation
 * Measures:
