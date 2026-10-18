@@ -28,7 +28,7 @@
 	```shell
 	cp keys.h.default keys.h
 	```
-	Updating this file is optional, but recommended, see *Keys* section below.
+	Updating this file is optional, but recommended, see [Keys](#keys) section below.
 2. Setup *Arduino IDE*: https://docs.heltec.org/en/node/asr650x/asr650x_general_docs/quick_start/index.html
 	1. Go to *File* -> *Preferences* -> *Additional boards manager URLs* and add `https://github.com/HelTecAutomation/CubeCell-Arduino/releases/download/V1.7.1/package_CubeCell_index.json`
 	2. In *Board manager*, install *CubeCell Development Framework*

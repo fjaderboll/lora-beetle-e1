@@ -385,12 +385,12 @@ static uint16_t readUint16BE(const uint8_t *buf)
 static void setUplinkInterval(const uint8_t *params, uint8_t len)
 {
 	if (len != 2) {
-		Serial.printf("Set interval: expected 2 parameter bytes, got %u\n", len);
+		Serial.printf("Set uplink interval error: expected 2 parameter bytes, got %u\n", len);
 		return;
 	}
 	uint16_t minutes = readUint16BE(params);
 	if (minutes < MIN_UPLINK_INTERVAL_MIN || minutes > MAX_UPLINK_INTERVAL_MIN) {
-		Serial.printf("Set interval: %u min out of range (%u..%u)\n",
+		Serial.printf("Set uplink interval error: %u min out of range (%u..%u), ignoring update\n",
 		              minutes, MIN_UPLINK_INTERVAL_MIN, MAX_UPLINK_INTERVAL_MIN);
 		return;
 	}

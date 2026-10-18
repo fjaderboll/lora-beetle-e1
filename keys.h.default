@@ -30,7 +30,7 @@ struct KeyMapping {
 // Optional per-device overrides, matched on the ChipID printed at boot.
 // Fields must be given in declaration order; omitted fields are zero.
 static const KeyMapping keyMap[] = {
-	// Own AppKey, generated DevEUI, default AppEUI (recommended)
+	// Device unique AppKey, generated DevEUI, default AppEUI (recommended)
 	{
 		.chipId = 0x0000000000000001,
 		.appKey = {
