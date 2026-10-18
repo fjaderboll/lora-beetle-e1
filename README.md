@@ -12,6 +12,7 @@
 	* Pressure
 	* Light
 * Rechargable battery (via USB)
+	* Up to 3 years of battery life ([details](doc/battery.md))
 * Weather proof case
 
 ## Hardware components
