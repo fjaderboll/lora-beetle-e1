@@ -7,8 +7,9 @@
  *
  * Behaviour:
  *   - OTAA join on power-up
- *   - Every APP_TX_DUTYCYCLE (15 min) wake up, read sensors,
- *     transmit an uplink, then go back to deep sleep.
+ *   - Every uplink interval (default 15 min) wake up, read sensors,
+ *     transmit an uplink, then go back to deep sleep. The interval
+ *     can be changed by a downlink.
  *   - Pressing the USER button sends an extra uplink right away
  *     and restarts the interval. The RGB LED blinks blue to
  *     confirm the press, or red if it is ignored (an uplink is already
@@ -23,6 +24,11 @@
  *   [4..5] pressure    * 10    (uint16)  -- hPa * 10, e.g. 10132 = 1013.2 hPa
  *   [6..9] light (lux) * 100   (uint32)  -- e.g. 12345 = 123.45 lx
  *   [10]   battery level       (uint8)   -- CubeCell BoardGetBatteryLevel (0..254)
+ *
+ * Downlink payload (big-endian, port 2), see doc/downlink.md:
+ *   [0]    command             (uint8)
+ *   [1..]  parameters
+ *   0x01 set uplink interval: [1..2] minutes (uint16, 1..1440)
  */
 
 #include "LoRaWan_APP.h"
@@ -78,7 +84,8 @@ LoRaMacRegion_t loraWanRegion = ACTIVE_REGION;
 /* Class A : end-device only opens RX windows after a TX. */
 DeviceClass_t  loraWanClass    = CLASS_A;
 
-/* Uplink interval: 15 minutes (in milliseconds). */
+/* Uplink interval: 15 minutes (in milliseconds). Changeable by downlink,
+ * reverts to this value on reset. */
 uint32_t appTxDutyCycle        = 15 * 60 * 1000;
 
 /* OTAA activation. */
@@ -346,8 +353,78 @@ static void prepareTxFrame(uint8_t port)
 
 	Serial.printf("T=%.2f C  RH=%.2f %%  P=%.2f hPa  L=%.2f lx  bat=%u\n",
 	              tempC, humidity, pressureHp, lux, battery);
-	
+
 	turnSensorPowerOff();
+}
+
+/* (Re)start the uplink interval, with a small random jitter (0..1 s). */
+static void scheduleNextUplink()
+{
+	txDutyCycleTime = appTxDutyCycle + randr(0, 1000);
+	LoRaWAN.cycle(txDutyCycleTime);
+}
+
+/* ------------------------------------------------------------------ */
+/* Downlink commands (see doc/downlink.md)                            */
+/* ------------------------------------------------------------------ */
+
+#define DOWNLINK_PORT            2
+
+#define CMD_SET_UPLINK_INTERVAL  0x01
+
+/* The CubeCell RTC alarm can't be set more than ~36 h ahead, so a single
+ * LoRaWAN.cycle() must stay below that. */
+#define MIN_UPLINK_INTERVAL_MIN  1
+#define MAX_UPLINK_INTERVAL_MIN  (24 * 60)
+
+static uint16_t readUint16BE(const uint8_t *buf)
+{
+	return ((uint16_t)buf[0] << 8) | buf[1];
+}
+
+static void setUplinkInterval(const uint8_t *params, uint8_t len)
+{
+	if (len != 2) {
+		Serial.printf("Set interval: expected 2 parameter bytes, got %u\n", len);
+		return;
+	}
+	uint16_t minutes = readUint16BE(params);
+	if (minutes < MIN_UPLINK_INTERVAL_MIN || minutes > MAX_UPLINK_INTERVAL_MIN) {
+		Serial.printf("Set interval: %u min out of range (%u..%u)\n",
+		              minutes, MIN_UPLINK_INTERVAL_MIN, MAX_UPLINK_INTERVAL_MIN);
+		return;
+	}
+	appTxDutyCycle = (uint32_t)minutes * 60 * 1000;
+	Serial.printf("Uplink interval set to %u min\n", minutes);
+	/* The interval for the uplink that carried this downlink is already
+	 * running, restart it so the new value applies right away. */
+	scheduleNextUplink();
+}
+
+/* Overrides the CubeCell weak handler, called for every downlink with data. */
+void downLinkDataHandle(McpsIndication_t *mcpsIndication)
+{
+	const uint8_t *buf = mcpsIndication->Buffer;
+	uint8_t len = mcpsIndication->BufferSize;
+
+	Serial.printf("Downlink on port %u: ", mcpsIndication->Port);
+	printHex("", buf, len);
+
+	if (mcpsIndication->Port != DOWNLINK_PORT || len == 0) {
+		Serial.println("Downlink ignored");
+		return;
+	}
+
+	switch (buf[0]) {
+		case CMD_SET_UPLINK_INTERVAL: {
+			setUplinkInterval(&buf[1], len - 1);
+			break;
+		}
+		default: {
+			Serial.printf("Unknown downlink command 0x%02X\n", buf[0]);
+			break;
+		}
+	}
 }
 
 /* ------------------------------------------------------------------ */
@@ -388,9 +465,7 @@ void loop()
 			break;
 		}
 		case DEVICE_STATE_CYCLE: {
-			/* Schedule next uplink, with a small random jitter (0..1 s). */
-			txDutyCycleTime = appTxDutyCycle + randr(0, 1000);
-			LoRaWAN.cycle(txDutyCycleTime);
+			scheduleNextUplink();
 			deviceState = DEVICE_STATE_SLEEP;
 			break;
 		}
