@@ -10,10 +10,9 @@ below with a grain of salt.
 Static assumptions:
 * Battery capacity: `3000 mAh`, of which `85 %` is usable
   (cutoff voltage, cold, ageing)
-* Self-discharge: `2 %` per month, typical for Li-ion
-  (1-3 %)
+* Self-discharge: `2 %` per month (typical for Li-ion is 1-3 %)
 * Sleep consumption: `10 µA` (CubeCell spec is `3.5 µA`,
-  plus some margin for the rest of the board)
+  plus margin for real-world variation and that my multimeter doesn't go single digit µA)
 * Data length: `24 bytes` (LoRaWAN headers `13 bytes` + uplink [payload](uplink.md) `11 bytes`)
 * Transmit power: `14 dBm` (EU868)
 
@@ -24,12 +23,12 @@ uses the same spreading factor as the uplink, the
 second one SF12 (set in TTN, its default for EU868 is
 SF9).
 
-| Phase             | Current | SF7 time  | SF12 time  |
-| ----------------- | ------- | --------- | ---------- |
-| Wake-up, sensors  | 10 mA   | 500 ms    | 500 ms     |
-| Transmit          | 90 mA   | 62 ms     | 1483 ms    |
-| Receive window 1  | 10 mA   | 30 ms     | 200 ms     |
-| Receive window 2  | 10 mA   | 200 ms    | 200 ms     |
+| Phase             | Current | SF7 time   | SF12 time   |
+| ----------------- | ------- | ---------- | ----------- |
+| Wake-up, sensors  | 10 mA   | 500 ms     | 500 ms      |
+| Transmit          | 90 mA   | 62 ms      | 1483 ms     |
+| Receive window 1  | 10 mA   | 30 ms      | 200 ms      |
+| Receive window 2  | 10 mA   | 200 ms     | 200 ms      |
 | **Per uplink**    |         | **13 mAs** | **142 mAs** |
 
 The things that affects most are the sending interval
@@ -37,11 +36,6 @@ and the radio conditions. Best case scenario is Data
 Rate 5 (Spreading Factor 7) and worst case scenario
 Data Rate 0 (Spreading Factor 12), which will prolong
 the airtime.
-
-```
-average current = sleep current + charge per uplink / interval
-battery life    = usable capacity / (average current + self-discharge)
-```
 
 Duty cycle is the share of time spent transmitting. In
 EU868 it must be kept below `1 %`.
@@ -66,3 +60,8 @@ radio conditions, the interval matters a lot more.
 [^1]: Above the 30 s per day allowed by the TTN
     [fair use policy](https://www.thethingsnetwork.org/docs/lorawan/duty-cycle/#fair-use-policy).
     At SF12, keep the interval above ~72 minutes.
+
+If using a `4000 mAh` battery (instead of `3000 mAh`), you can add about 1-3
+months of battery life to above. Self-discharge grows
+with the capacity, so a bigger battery helps less than
+you might expect.
