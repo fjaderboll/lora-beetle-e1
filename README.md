@@ -24,6 +24,8 @@
 * [Circuit board](board/README.md)
 * [Case](case/README.md)
 
+See [cost](doc/cost.md) for estimated pricing.
+
 ## Software setup
 1. Create local key file:
 	```shell
