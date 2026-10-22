@@ -1,5 +1,7 @@
 # Case
 
+<img src="images/beetle-assembly.png" align="right" width="280">
+
 A beetle themed wall case, based on the [sketch](case-sketch.svg). It has two
 printed parts:
 
@@ -9,8 +11,8 @@ printed parts:
 
 Air enters under the wing tips at the bottom, rises past the sensors and
 leaves through vents under the thorax lip. All openings face down, so rain
-from above can't get in. The BH1750 sits under a thin spot in the right wing
-cover, so a white lid lets daylight through.
+from above can't get in. The light sensor (BH1750) sits under a thin spot in the right wing
+cover, hopefully letting enough light through.
 
 | File                                           | Contents                                            |
 |------------------------------------------------|-----------------------------------------------------|
@@ -27,6 +29,13 @@ Export the STL files with OpenSCAD (*Render*, then *Export as STL*) or:
 ```shell
 openscad -o beetle-base.stl case/beetle-base.scad
 openscad -o beetle-lid.stl case/beetle-lid.scad
+```
+
+Render `.scad` file:
+```shell
+openscad -o case/images/beetle-assembly.png --imgsize=800,1000 \
+	--colorscheme=Tomorrow --camera=0,0,0,-25,35,0,0 --viewall --autocenter \
+	case/beetle-assembly.scad
 ```
 
 ## Printing
