@@ -58,15 +58,17 @@ hook_ramp = 2.2;        // height of the lead-in ramp above the catch
 board_z = floor_t + standoff;       // underside of the board
 board_top = board_z + board_t;
 usb_z = board_top + header_stack + cc_pcb_t + usb_h / 2;
-usb_hole = [14, 9];     // room for the plug overmould
+// Notch in the bottom wall for the USB-C plug overmould. It is open at the
+// top and a tab on the lid fills it, so the lid comes off for charging.
+usb_hole = [14, 9];
+usb_notch_z = usb_z - usb_hole[1] / 2;
 
 Bw = board_w / 2 + side_gap + wall_t;                           // half width
 Yb_top = board_l / 2 + top_gap + wall_t;
 Yb_bot = -(board_l / 2 + hook_gap + hook_t + hook_flex + wall_t);
 base_r_top = 4;
 base_r_bot = 8;         // follows the oval wing tips of the lid
-Hb = 29.5;              // wall height
-assert(usb_z + usb_hole[1] / 2 + 2 <= Hb, "USB-C hole does not fit in the base wall");
+Hb = 26;                // wall height; the battery reaches up into the lid
 
 // Lip along the top of the base. The lid hooks in behind it.
 lip_h = 1.8;            // how far it stands up from the top face
@@ -86,16 +88,9 @@ assert(key_boss_h < board_z - 0.5, "keyhole bosses touch the board");
 
 // LoRa antenna clips on the inside of the right-hand wall.
 ant_d = 5.4;            // clip bore, for a ~5 mm spring antenna
-ant_z = 24;
+ant_z = Hb - 4.5;
 ant_clip_y = [14, 40];
 ant_clip_l = 6;
-
-// Snap beads on the outside of the side walls, matched by grooves in the lid.
-snap_z = 25.6;
-snap_h = 0.75;          // how far the bead sticks out (0.45 mm past the lid)
-snap_w = 2.7;           // bead width at the wall
-snap_y = [-38, -12];
-snap_clr = 0.15;
 
 // Intake slots in the bottom wall, sheltered by the wing tips.
 vent_bottom_w = 1.8;
@@ -105,9 +100,17 @@ vent_bottom_z = 13;
 // --------------------------------------------------------------------- lid
 lid_clr = 0.3;          // lid to base, all round
 lid_t = 2;
-skirt_z = 24;           // lower edge of the lid all round (the print bed side)
+skirt_z = usb_notch_z + lid_clr;    // lower edge of the lid all round (the print bed side)
 hook_clr = 0.4;         // lid hook to base lip
 ledge_h = 1.5;          // inner ledge that rests on top of the base walls
+
+// Snap beads on the outside of the base side walls, matched by grooves in
+// the lid skirt.
+snap_z = skirt_z + 2.5;
+snap_h = 0.75;          // how far the bead sticks out (0.45 mm past the lid)
+snap_w = 2.7;           // bead width at the wall
+snap_y = [-38, -12];
+snap_clr = 0.15;
 
 W_el = Bw + lid_clr + lid_t;    // half width of the wing covers
 elytra_b = 7;           // dome height above the base wall
@@ -116,6 +119,7 @@ elytra_k = 14.5 / W_el; // dome centres at ±k·w; the domes meet in a seam at X
 W_th = W_el + 1.5;      // the thorax is a bit wider ...
 thorax_b = 13;          // ... and stands out further, over the top vents
 thorax_k = 10 / W_th;   // and is rounder, with only a faint centre line
+assert(board_top + cell_lift + cell_d + 1.5 <= Hb + elytra_b - lid_t, "battery touches the lid");
 
 plate_y = Yb_top + lip_h + lid_clr;     // underside of the lid top, above the lip
 Y_top = plate_y + 3.5;  // top of the oval, at X = 0
@@ -265,6 +269,15 @@ module snap_bead_2d(grow = 0) {
 module snap_beads(grow = 0) {
     for (m = [0, 1]) mirror([m, 0, 0])
         extrude_y(snap_y[0] - grow, snap_y[1] + grow) translate([Bw, snap_z]) snap_bead_2d(grow);
+}
+
+// USB-C notch in the bottom wall, as a 2D shape in the (X, Z) plane, grown by d.
+module usb_notch_2d(d = 0) {
+    r = 1.5;
+    offset(delta = d) hull() {
+        for (s = [-1, 1]) translate([usb_x + s * (usb_hole[0] / 2 - r), usb_notch_z + r]) circle(r = r);
+        translate([usb_x - usb_hole[0] / 2, Hb]) square([usb_hole[0], 5]);
+    }
 }
 
 // The lip on top of the base, grown by d (and lowered by dz at the back).

@@ -126,8 +126,7 @@ module antenna_clips() {
 // ------------------------------------------------------------- bottom wall
 
 module usb_hole() {
-    extrude_y(Yb_bot - 1, Yb_bot + wall_t + 1) translate([usb_x, usb_z]) hull()
-        for (s = [-1, 1]) translate([s * (usb_hole[0] - usb_hole[1]) / 2, 0]) circle(d = usb_hole[1]);
+    extrude_y(Yb_bot - 1, Yb_bot + wall_t + 1) usb_notch_2d();
 }
 
 module bottom_vents() {

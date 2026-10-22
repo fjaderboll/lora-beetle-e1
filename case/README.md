@@ -50,9 +50,10 @@ openscad -o beetle-lid.stl case/beetle-lid.scad
 4. Hook the top edge of the lid behind the lip on top of the base. Then swing
    the lid down until the snaps on both sides click.
 
-To open the case, pull the wing tips away from the wall. To take out the
-board, push the hook at the bottom edge towards the bottom wall and lift that
-end of the board.
+To open the case, pull the wing tips away from the wall. Take the lid off to
+charge the battery: a tab on the lid closes the USB-C opening in the bottom
+wall. To take out the board, push the hook at the bottom edge towards the
+bottom wall and lift that end of the board.
 
 ## Check before printing
 These dimensions come from datasheets and standard parts. Measure your own
@@ -60,7 +61,7 @@ parts and adjust them in [`beetle-common.scad`](beetle-common.scad) if they
 differ:
 * `header_stack` (11 mm): from the top of the carrier board to the underside
   of the CubeCell. That is an 8.5 mm female socket plus the 2.5 mm plastic of
-  the male pins. It sets the height of the USB-C hole.
+  the male pins. It sets the height of the USB-C opening.
 * `ant_d` (5.4 mm): the bore of the antenna clips, for a spring antenna of
   about 5 mm.
 * `lid_clr` (0.3 mm) and `snap_h`: the fit between the lid and base. If the

@@ -25,12 +25,18 @@ module beetle_lid() {
                 loft([for (y = lid_main_ys) lid_slice(lid_inner(y, Hb - 0.01), y)]);
                 loft([for (y = lid_hood_ys) lid_slice(lid_inner(y, skirt_z - 1), y)]);
                 translate([0, 0, -1]) linear_extrude(Hb + 1) base_outline_2d(lid_clr);
+                // Opens the wing tips up to the rounded corners of the base.
+                extrude_y(Yb_bot - lid_clr - 0.01, Yb_bot + base_r_bot) intersection() {
+                    lid_section_2d(lid_inner(Yb_bot - lid_clr, skirt_z - 1));
+                    translate([-50, 0]) square([100, Hb]);
+                }
                 lip(lid_clr, hook_clr);
                 top_vents();
                 end_vents();
                 light_window();
             }
             ledge();
+            usb_tab();
             collar();
             ridges();
             scutellum();
@@ -44,6 +50,14 @@ module ledge() {
     translate([0, 0, Hb]) linear_extrude(ledge_h) difference() {
         base_outline_2d(lid_clr);
         base_outline_2d(lid_clr - wall_t);
+    }
+}
+
+// Fills the USB-C notch in the bottom wall of the base.
+module usb_tab() {
+    extrude_y(Yb_bot, Yb_bot + wall_t) intersection() {
+        usb_notch_2d(-lid_clr);
+        translate([-50, skirt_z]) square([100, Hb - skirt_z + 0.01]);
     }
 }
 
