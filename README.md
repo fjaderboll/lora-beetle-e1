@@ -22,7 +22,7 @@
 * Lithium-ion battery 3.7V (18650)
 * Battery holder
 * [Circuit board](board/README.md)
-* Case
+* [Case](case/README.md)
 
 ## Software setup
 1. Create local key file:
