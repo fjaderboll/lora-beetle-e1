@@ -1,8 +1,10 @@
 # Case
 
-<img src="images/beetle-assembly.png" width="280">
-<img src="images/beetle-base.png" width="280">
-<img src="images/beetle-lid.png" width="280">
+<p>
+<img src="images/beetle-assembly.png" width="32%">
+<img src="images/beetle-base.png" width="32%">
+<img src="images/beetle-lid.png" width="32%">
+</p>
 
 A beetle themed wall case (based on this [sketch](images/case-sketch.svg)). It has two
 printed parts:
