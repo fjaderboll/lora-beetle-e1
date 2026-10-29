@@ -74,6 +74,7 @@ Hb = 26;                // wall height; the battery reaches up into the lid
 lip_h = 1.8;            // how far it stands up from the top face
 lip_t = 2.4;
 lip_x = 25.5;           // half length
+lip_bevel = 1.6;        // size of the 45° bevels on its outer edges
 
 // Keyhole slots for hanging the case on two screws (head up to 8.5 mm).
 key_pos = [[-14, 20], [14, 20]];
@@ -139,12 +140,12 @@ Y_end = Yb_bot - hood_len;
 oval_b = (oval_up + hood_len) / sqrt(1 - pow(tip_x / (W_el + tip_x), 2));
 
 // Light window over the BH1750: the lid is thinned from the inside.
-win_d = 18;
-win_t = 0.8;
+win_d = 20;
+win_t = 0.4;
 
 // Top vents: slots through the step under the thorax lip, opening downwards.
 vent_w = 2.8;
-vent_top_x = [11.2, 15.2, 19.2, 23.2];
+vent_top_x = [3.2, 7.2, 11.2, 15.2, 19.2, 23.2];
 // Bottom vents: slots through the end wall of the lid, under the wing tips.
 vent_end_x = [for (x = [-24 : 4 : 24]) x];
 

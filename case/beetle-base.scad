@@ -32,7 +32,7 @@ module beetle_base() {
         hook_relief();
         // Bevels on the lip so the lid can swing on and off.
         for (z = [Hb - lip_t, Hb]) translate([0, Yb_top + lip_h, z]) rotate([45, 0, 0])
-            cube([2 * lip_x + 2, 1.6, 1.6], center = true);
+            cube([2 * lip_x + 2, lip_bevel, lip_bevel], center = true);
     }
     board_hook();
 }

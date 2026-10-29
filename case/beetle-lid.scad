@@ -10,7 +10,12 @@
 
 include <beetle-common.scad>
 
-beetle_lid_print();
+/* [View] */
+// Turns the lid over to show the inside (turn off again before exporting).
+upside_down = false;
+
+if (upside_down) rotate([0, 180, 0]) beetle_lid_print();
+else beetle_lid_print();
 
 module beetle_lid_print() {
     translate([0, 0, -skirt_z]) beetle_lid();
@@ -45,12 +50,19 @@ module beetle_lid() {
     }
 }
 
-// Rests on top of the base walls.
+// Rests on top of the base walls. At the top end it reaches over the lip to
+// the top wall, so it prints without support.
 module ledge() {
     translate([0, 0, Hb]) linear_extrude(ledge_h) difference() {
         base_outline_2d(lid_clr);
         base_outline_2d(lid_clr - wall_t);
     }
+    // Over the lip, with a 45° fillet into the top wall that clears the outer
+    // bevel on the lip by lid_clr. Seen from the side (Y, Z).
+    f = lid_clr + lip_bevel / sqrt(2) - lid_clr * sqrt(2);
+    translate([-lip_x - lid_clr, 0, 0]) rotate([90, 0, 90]) linear_extrude(2 * (lip_x + lid_clr))
+        polygon([[Yb_top, Hb], [plate_y - f, Hb], [plate_y + 0.01, Hb - f - 0.01],
+                 [plate_y + 0.01, Hb + ledge_h], [Yb_top, Hb + ledge_h]]);
 }
 
 // Fills the USB-C notch in the bottom wall of the base.
@@ -107,10 +119,13 @@ module ridges() {
         hull() for (y = [r[1], r[2]]) translate([s * r[0], y, elytra_z(r[0])]) sphere(r = ridge_r, $fn = 12);
 }
 
-// The small triangle between the wing covers, just under the thorax.
+// The small triangle between the wing covers, just under the thorax. It
+// leaves a 2 mm gap under the step for the middle top vents, and slopes down
+// to the tip, which stands about 1 mm above the seam.
 module scutellum() {
-    translate([0, 0, Hb + 4.1]) linear_extrude(elytra_b + 0.6 - 4.1) hull() {
-        for (s = [-1, 1]) translate([s * 4, Y_lip - 1.5]) circle(r = 1.5);
-        translate([0, Y_lip - 15]) circle(r = 1.2);
+    z0 = Hb + 4.1;
+    hull() {
+        for (s = [-1, 1]) translate([s * 4, Y_lip - 3.5, z0]) cylinder(r = 1.5, h = elytra_b + 0.6 - 4.1);
+        translate([0, Y_lip - 17, z0]) cylinder(r = 1.2, h = 1.1);
     }
 }
