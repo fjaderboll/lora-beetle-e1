@@ -1,10 +1,10 @@
 # Case
 
-<img src="images/beetle-assembly.png" align="right" width="280">
-<img src="images/beetle-base.png" align="right" width="280">
-<img src="images/beetle-lid.png" align="right" width="280">
+<img src="images/beetle-assembly.png" width="280">
+<img src="images/beetle-base.png" width="280">
+<img src="images/beetle-lid.png" width="280">
 
-A beetle themed wall case, based on the [sketch](case-sketch.svg). It has two
+A beetle themed wall case (based on this [sketch](images/case-sketch.svg)). It has two
 printed parts:
 
 * **Base**: hangs on the wall and holds the carrier board.
@@ -13,8 +13,8 @@ printed parts:
 
 Air enters under the wing tips at the bottom, rises past the sensors and
 leaves through vents under the thorax lip. All openings face down, so rain
-from above can't get in. The light sensor (BH1750) sits under a thin spot in the right wing
-cover, hopefully letting enough light through.
+from above can't get in. The light sensor (BH1750) sits under a thin spot in
+the right wing cover, hopefully letting enough light through.
 
 | File                                           | Contents                                            |
 |------------------------------------------------|-----------------------------------------------------|
@@ -27,21 +27,20 @@ The assembly file has customizer settings to hide parts, lift the lid
 (`explode`), swing it open on its hook (`open_angle`) and cut the model open
 (`section`).
 
-Export the STL files with OpenSCAD (*Render*, then *Export as STL*) or:
+Export the STL files with OpenSCAD (*Render*, then *Export as STL*) or run:
 ```shell
 openscad -o beetle-base.stl case/beetle-base.scad
 openscad -o beetle-lid.stl case/beetle-lid.scad
 ```
 
-To re-render the images, just run `render-images.sh`.
+To re-render the images, run `render-images.sh`.
 
 ## Printing
 * Use PETG or ASA, not PLA. PLA softens in the sun and goes brittle outdoors.
   Preferable print the lid in a light color, to allow more light in for the light sensor.
 * **Base**: back on the bed, no supports.
 * **Lid**: open side down, as the file shows it. Enable supports
-  *on build plate only* for the inside of the domes. Remove them through the
-  open side.
+  *on build plate only* for the inside of the domes.
 
 ## Assembly
 1. Slide the top end of the board (the BME280 end) into the slot at the top,
