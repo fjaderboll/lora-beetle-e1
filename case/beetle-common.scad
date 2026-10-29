@@ -12,7 +12,7 @@ $fn = 48;
 // ------------------------------------------------------------------ board
 board_w = 56;
 board_l = 101;
-board_t = 1.6;
+board_t = 1.8;
 board_r = 3;
 
 // KiCad board coordinates (origin top left, y down) to case coordinates.
@@ -87,9 +87,9 @@ key_boss_h = key_back_t + key_pocket_h + 1;
 assert(key_boss_h < board_z - 0.5, "keyhole bosses touch the board");
 
 // LoRa antenna clips on the inside of the right-hand wall.
-ant_d = 5.4;            // clip bore, for a ~5 mm spring antenna
+ant_d = 3.5;            // clip bore
 ant_z = Hb - 4.5;
-ant_clip_y = [14, 40];
+ant_clip_y = [40];      // near the top, so the board can slide in under it
 ant_clip_l = 6;
 
 // Intake slots in the bottom wall, sheltered by the wing tips.

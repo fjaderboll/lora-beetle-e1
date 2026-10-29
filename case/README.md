@@ -52,17 +52,18 @@ openscad -o case/images/beetle-assembly.png --imgsize=800,1000 \
    shank up to 4.4 mm and a head up to 8.5 mm (for example 4 mm pan head
    screws). Leave the heads about 2.5 mm out from the wall. Put the base over
    the heads and slide it down so it hangs on the keyhole slots.
-2. Slide the top edge of the board (the BME280 end) under the two lips at the
-   top of the base. Then press the bottom edge down until the hook clicks.
-   The two pins go into the bottom mounting holes.
-3. Press the LoRa antenna into the two clips on the right-hand wall.
+2. Slide the top end of the board (the BME280 end) into the slot at the top,
+   under the antenna clip. Then press the bottom edge down until the hook
+   clicks. The board rests on a bar at each end, and the two pins go into the
+   bottom mounting holes.
+3. Press the LoRa antenna into the clip on the right-hand wall.
 4. Hook the top edge of the lid behind the lip on top of the base. Then swing
    the lid down until the snaps on both sides click.
 
 To open the case, pull the wing tips away from the wall. Take the lid off to
 charge the battery: a tab on the lid closes the USB-C opening in the bottom
 wall. To take out the board, push the hook at the bottom edge towards the
-bottom wall and lift that end of the board.
+bottom wall, lift that end of the board and pull it out of the slot.
 
 ## Check before printing
 These dimensions come from datasheets and standard parts. Measure your own
@@ -71,7 +72,7 @@ differ:
 * `header_stack` (11 mm): from the top of the carrier board to the underside
   of the CubeCell. That is an 8.5 mm female socket plus the 2.5 mm plastic of
   the male pins. It sets the height of the USB-C opening.
-* `ant_d` (5.4 mm): the bore of the antenna clips, for a spring antenna of
-  about 5 mm.
+* `board_t` (1.8 mm): the board thickness plus some play under the hook.
+* `ant_d` (3.5 mm): the bore of the antenna clip.
 * `lid_clr` (0.3 mm) and `snap_h`: the fit between the lid and base. If the
   lid is too tight or too loose, change these.

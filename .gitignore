@@ -1,3 +1,5 @@
+/case/*.stl
+/case/*.gcode
 /keys.h
 /temp/
 *.kicad_prl

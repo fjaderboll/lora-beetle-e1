@@ -3,9 +3,10 @@
 // Shown in print orientation: back on the bed, no supports needed.
 //
 // Hang it on two screws through the keyhole slots (28 mm apart, level).
-// Then slide the top edge of the board under the two lips at the top and
-// press the bottom edge down until the hook clicks. To take the board out,
-// push the hook towards the bottom wall and lift that end.
+// Then slide the top end of the board into the slot at the top, under the
+// antenna clip, and press the bottom edge down until the hook clicks. To take
+// the board out, push the hook towards the bottom wall, lift that end and pull
+// the board out of the slot.
 
 include <beetle-common.scad>
 
@@ -61,24 +62,34 @@ module keyhole_cuts() {
 
 // ------------------------------------------------------------ board mount
 
-post_d = 6.5;
 pin_d = 2.8;
-top_lips = [[-20, -8], [8, 20]];    // X ranges, clear of the mounting holes
-lip_overlap = 1.5;                  // over the top edge of the board
+bar_w = 6.5;        // how far the end bars reach in under the board
+slot_overlap = 1.5; // how far the bar over the top slot reaches over the board
 
 module board_supports() {
-    // Posts under the mounting holes, with locating pins in the bottom two.
-    for (p = mount_holes) translate(p) cylinder(d = post_d, h = board_z);
+    // Bars across the top and bottom ends, merged into the walls, with
+    // locating pins for the bottom two mounting holes. The bottom bar leaves
+    // room for the hook.
+    linear_extrude(board_z) intersection() {
+        base_outline_2d();
+        union() {
+            translate([-Bw, board_l / 2 - bar_w]) square([2 * Bw, 10]);
+            difference() {
+                translate([-Bw, -board_l / 2 - 10]) square([2 * Bw, 10 + bar_w]);
+                translate([hook_x[0] - 1, hook_face - hook_t - hook_flex - 1])
+                    square([hook_x[1] - hook_x[0] + 2, hook_t + hook_flex + 1.6]);
+            }
+        }
+    }
+    // Bar over the top edge of the board: with the bar under it, a slot that
+    // keeps the board in when the case is moved around.
+    translate([0, 0, board_top + 0.25]) linear_extrude(1.5) intersection() {
+        base_outline_2d();
+        translate([-Bw, board_l / 2 - slot_overlap]) square([2 * Bw, 10]);
+    }
     for (p = [mount_holes[2], mount_holes[3]]) translate([p[0], p[1], board_z]) {
         translate([0, 0, -1]) cylinder(d = pin_d, h = board_t + 1.2);
         translate([0, 0, board_t + 0.2]) cylinder(d1 = pin_d, d2 = pin_d - 0.8, h = 0.6);
-    }
-    // Slot for the top edge of the board: a ledge under it and lips over it.
-    y0 = board_l / 2 - lip_overlap;
-    y1 = board_l / 2 + top_gap + 0.5;
-    for (r = top_lips) {
-        translate([r[0], y0, 0]) cube([r[1] - r[0], y1 - y0, board_z]);
-        translate([r[0], y0, board_top + 0.25]) cube([r[1] - r[0], y1 - y0, 1.5]);
     }
     // Ledges under the long edges, half way up.
     for (s = [-1, 1]) translate([s * (board_w / 2 + side_gap / 2 - 0.25) - 1.25, -6, 0])

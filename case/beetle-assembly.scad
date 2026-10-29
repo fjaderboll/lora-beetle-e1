@@ -67,9 +67,9 @@ module board_mockup() {
     sensor(kicad([40.63, 9]), 15.5, -12, "#5b2a86");
     sensor(kicad([41.9, 53.5]), 13.9, 18, "#1e4f9c");
 
-    // Spring antenna in its clips.
+    // Antenna in its clip.
     color("#111") translate([Bw - wall_t - ant_d / 2 - 0.3, -8, ant_z]) rotate([-90, 0, 0])
-        cylinder(d = 5, h = 56);
+        cylinder(d = ant_d - 0.4, h = 56);
 }
 
 // Pin row at p; the module body runs `len` along Y from it (negative = down).
