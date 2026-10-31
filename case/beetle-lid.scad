@@ -65,11 +65,16 @@ module ledge() {
                  [plate_y + 0.01, Hb + ledge_h], [Yb_top, Hb + ledge_h]]);
 }
 
-// Fills the USB-C notch in the bottom wall of the base.
+// Closes the USB-C notch in the base: a straight plate in line with the
+// bottom wall, which runs on across the corner and merges with the wing cover,
+// so it's held along that side too and doesn't break off.
 module usb_tab() {
-    extrude_y(Yb_bot, Yb_bot + wall_t) intersection() {
-        usb_notch_2d(-lid_clr);
-        translate([-50, skirt_z]) square([100, Hb - skirt_z + 0.01]);
+    intersection() {
+        extrude_y(Yb_bot - 1, Yb_bot + wall_t) intersection() {
+            usb_notch_2d(-lid_clr);
+            translate([-50, skirt_z]) square([100, Hb - skirt_z + 0.01]);
+        }
+        linear_extrude(Hb + 1) base_outline_2d(lid_clr + 0.01);
     }
 }
 

@@ -136,8 +136,10 @@ module antenna_clips() {
 
 // ------------------------------------------------------------- bottom wall
 
+// Through the bottom wall and the whole rounded corner on the right, up to
+// where the side wall starts.
 module usb_hole() {
-    extrude_y(Yb_bot - 1, Yb_bot + wall_t + 1) usb_notch_2d();
+    extrude_y(Yb_bot - 1, Yb_bot + base_r_bot) usb_notch_2d();
 }
 
 module bottom_vents() {

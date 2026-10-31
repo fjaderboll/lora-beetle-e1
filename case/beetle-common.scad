@@ -59,8 +59,10 @@ board_z = floor_t + standoff;       // underside of the board
 board_top = board_z + board_t;
 usb_z = board_top + header_stack + cc_pcb_t + usb_h / 2;
 // Notch in the bottom wall for the USB-C plug overmould. It is open at the
-// top and a tab on the lid fills it, so the lid comes off for charging.
-usb_hole = [14, 9];
+// top and a tab on the lid fills it, so the lid comes off for charging. On the
+// right it runs on through the corner to the side wall, so the tab reaches
+// across to the wing cover.
+usb_hole = [14, 9];     // around the plug: the notch starts usb_hole[0] / 2 left of it
 usb_notch_z = usb_z - usb_hole[1] / 2;
 
 Bw = board_w / 2 + side_gap + wall_t;                           // half width
@@ -275,9 +277,10 @@ module snap_beads(grow = 0) {
 // USB-C notch in the bottom wall, as a 2D shape in the (X, Z) plane, grown by d.
 module usb_notch_2d(d = 0) {
     r = 1.5;
+    x = [usb_x - usb_hole[0] / 2, Bw + 2];
     offset(delta = d) hull() {
-        for (s = [-1, 1]) translate([usb_x + s * (usb_hole[0] / 2 - r), usb_notch_z + r]) circle(r = r);
-        translate([usb_x - usb_hole[0] / 2, Hb]) square([usb_hole[0], 5]);
+        for (xi = [x[0] + r, x[1] - r]) translate([xi, usb_notch_z + r]) circle(r = r);
+        translate([x[0], Hb]) square([x[1] - x[0], 5]);
     }
 }
 
