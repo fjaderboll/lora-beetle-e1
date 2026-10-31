@@ -58,6 +58,7 @@ To re-render the images, run `render-images.sh`.
 
 To open the case, pull the wing tips away from the wall. Take the lid off to
 charge the battery: a tab on the lid closes the USB-C opening in the bottom
-wall. To take out the board, pull the antenna down out of its tunnel, push the
+wall. The opening runs on up the right-hand wall, so the reset button on the
+CubeCell can be reached too. To take out the board, pull the antenna down out of its tunnel, push the
 hook at the bottom edge towards the bottom wall, lift that end of the board and
 pull it out of the slot.

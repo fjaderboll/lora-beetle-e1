@@ -27,7 +27,7 @@ module beetle_base() {
             snap_beads();
         }
         keyhole_cuts();
-        usb_hole();
+        usb_notch();
         bottom_vents();
         hook_relief();
         // Bevels on the lip so the lid can swing on and off.
@@ -137,12 +137,6 @@ module antenna_tunnel() {
 }
 
 // ------------------------------------------------------------- bottom wall
-
-// Through the bottom wall and the whole rounded corner on the right, up to
-// where the side wall starts.
-module usb_hole() {
-    extrude_y(Yb_bot - 1, Yb_bot + base_r_bot) usb_notch_2d();
-}
 
 module bottom_vents() {
     extrude_y(Yb_bot - 1, Yb_bot + wall_t + 1)

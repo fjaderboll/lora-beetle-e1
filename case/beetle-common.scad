@@ -60,10 +60,12 @@ board_top = board_z + board_t;
 usb_z = board_top + header_stack + cc_pcb_t + usb_h / 2;
 // Notch in the bottom wall for the USB-C plug overmould. It is open at the
 // top and a tab on the lid fills it, so the lid comes off for charging. On the
-// right it runs on through the corner to the side wall, so the tab reaches
-// across to the wing cover.
+// right it runs on through the corner and up the side wall, so the tab joins
+// the wing cover, and the reset button on the CubeCell can be reached with the
+// lid off.
 usb_hole = [14, 9];     // around the plug: the notch starts usb_hole[0] / 2 left of it
 usb_notch_z = usb_z - usb_hole[1] / 2;
+usb_side_open = 13;     // up the side wall to this far above the inside of the bottom wall
 
 Bw = board_w / 2 + side_gap + wall_t;                           // half width
 Yb_top = board_l / 2 + top_gap + wall_t;
@@ -282,6 +284,22 @@ module usb_notch_2d(d = 0) {
     offset(delta = d) hull() {
         for (xi = [x[0] + r, x[1] - r]) translate([xi, usb_notch_z + r]) circle(r = r);
         translate([x[0], Hb]) square([x[1] - x[0], 5]);
+    }
+}
+
+// The whole notch, grown by d: through the bottom wall, the rounded corner on
+// the right and the bottom of the right-hand wall, where it ends in the same
+// rounded corner, seen from the side (Y, Z).
+module usb_notch(d = 0) {
+    r = 1.5;
+    y = [Yb_bot - 1, Yb_bot + wall_t + usb_side_open];
+    intersection() {
+        extrude_y(y[0], y[1] + 1) usb_notch_2d(d);
+        translate([-Bw - 5, 0, 0]) rotate([90, 0, 90]) linear_extrude(2 * Bw + 10) offset(delta = d) hull() {
+            translate([y[1] - r, usb_notch_z + r]) circle(r = r);
+            translate([y[0], usb_notch_z]) square([1, Hb + 5 - usb_notch_z]);
+            translate([y[0], Hb]) square([y[1] - y[0], 5]);
+        }
     }
 }
 
