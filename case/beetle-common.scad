@@ -89,11 +89,12 @@ key_pocket_h = 3.2;
 key_boss_h = key_back_t + key_pocket_h + 1;
 assert(key_boss_h < board_z - 0.5, "keyhole bosses touch the board");
 
-// LoRa antenna clips on the inside of the right-hand wall.
-ant_d = 3.5;            // clip bore
+// LoRa antenna tunnel on the inside of the right-hand wall. The antenna is
+// pushed in from below.
+ant_d = 4.5;            // tunnel bore
+ant_x = Bw - wall_t - ant_d / 2 - 0.3;
 ant_z = Hb - 4.5;
-ant_clip_y = [40];      // near the top, so the board can slide in under it
-ant_clip_l = 6;
+ant_y = [Yb_top - wall_t - 21, Yb_top - wall_t - 7];    // 21 to 7 mm below the top wall
 
 // Intake slots in the bottom wall, sheltered by the wing tips.
 vent_bottom_w = 1.8;

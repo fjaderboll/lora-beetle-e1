@@ -4,9 +4,9 @@
 //
 // Hang it on two screws through the keyhole slots (28 mm apart, level).
 // Then slide the top end of the board into the slot at the top, under the
-// antenna clip, and press the bottom edge down until the hook clicks. To take
-// the board out, push the hook towards the bottom wall, lift that end and pull
-// the board out of the slot.
+// antenna tunnel, and press the bottom edge down until the hook clicks. To
+// take the board out, pull the antenna out of the tunnel, push the hook
+// towards the bottom wall, lift that end and pull the board out of the slot.
 
 include <beetle-common.scad>
 
@@ -23,7 +23,7 @@ module beetle_base() {
             lip();
             keyhole_bosses();
             board_supports();
-            antenna_clips();
+            antenna_tunnel();
             snap_beads();
         }
         keyhole_cuts();
@@ -118,19 +118,21 @@ module hook_relief() {
 
 // ----------------------------------------------------------------- antenna
 
-// Cradles on the right-hand wall; the antenna presses in from the front.
-module antenna_clips() {
+// Tunnel on the right-hand wall; the antenna is pushed in from below.
+module antenna_tunnel() {
     xin = Bw - wall_t;
-    xc = xin - ant_d / 2 - 0.3;
     ro = ant_d / 2 + 1.4;
-    for (y = ant_clip_y) extrude_y(y - ant_clip_l / 2, y + ant_clip_l / 2) difference() {
-        union() {
-            translate([xc, ant_z]) circle(r = ro);
-            // 45° gusset underneath, so it prints without support.
-            polygon([[xin + 0.5, ant_z - (xin + 0.5 - xc + ro)], [xin + 0.5, ant_z], [xc - ro, ant_z]]);
+    zw = ant_z - sqrt(2) * ro - (xin - ant_x);  // where the underside meets the wall
+    lead = 0.6;                                 // lead-in at the lower end
+    difference() {
+        // 45° underside down to the wall, so it prints without support.
+        extrude_y(ant_y[0], ant_y[1]) hull() {
+            translate([ant_x, ant_z]) circle(r = ro);
+            translate([xin - 0.01, zw]) square([0.5, ant_z - zw]);
         }
-        translate([xc, ant_z]) circle(d = ant_d);
-        translate([xc - ant_d * 0.4, ant_z]) square([ant_d * 0.8, ro + 1]);
+        extrude_y(ant_y[0] - 1, ant_y[1] + 1) translate([ant_x, ant_z]) circle(d = ant_d);
+        translate([ant_x, ant_y[0] - 0.01, ant_z]) rotate([-90, 0, 0])
+            cylinder(d1 = ant_d + 2 * lead, d2 = ant_d, h = lead);
     }
 }
 
