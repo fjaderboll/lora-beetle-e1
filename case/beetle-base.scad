@@ -16,7 +16,7 @@ module beetle_base() {
     difference() {
         union() {
             linear_extrude(floor_t) base_outline_2d();
-            linear_extrude(Hb) difference() {
+            linear_extrude(Hb, convexity = 4) difference() {
                 base_outline_2d();
                 base_outline_2d(-wall_t);
             }
