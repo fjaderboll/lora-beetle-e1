@@ -46,14 +46,16 @@ standoff = 5;           // gap under the board for pin tails and keyhole bosses
 wall_t = 2;
 side_gap = 0.4;         // board edge to wall, left/right
 top_gap = 0.4;          // board top edge to wall
+bottom_gap = 2.9;       // board bottom edge to wall, room for the clip
 
-// Snap hook at the bottom edge of the board.
-hook_gap = 0.2;         // board edge to hook arm
-hook_t = 1.4;           // arm thickness
-hook_flex = 1.3;        // free space behind the arm
-hook_x = [-19, -6];     // left of the CubeCell
-hook_catch = 0.95;      // how far the catch sticks out from the arm
-hook_ramp = 2.2;        // height of the lead-in ramp above the catch
+// Clip at the bottom edge of the board: a spring bar along the bottom wall,
+// with a rounded bump that reaches in over the edge of the board.
+clip_x = -7.75;         // centre, in line with the middle rib between the bottom vents
+clip_l = 24;            // bar length, including the posts that hold it at the ends
+clip_t = 1;             // bar thickness
+clip_gap = 0.8;         // free space behind the bar
+clip_over = 0.4;        // how far the bump reaches in over the board
+clip_w = 3;             // bump width
 
 board_z = floor_t + standoff;       // underside of the board
 board_top = board_z + board_t;
@@ -69,7 +71,7 @@ usb_side_open = 13;     // up the side wall to this far above the inside of the 
 
 Bw = board_w / 2 + side_gap + wall_t;                           // half width
 Yb_top = board_l / 2 + top_gap + wall_t;
-Yb_bot = -(board_l / 2 + hook_gap + hook_t + hook_flex + wall_t);
+Yb_bot = -(board_l / 2 + bottom_gap + wall_t);
 base_r_top = 4;
 base_r_bot = 8;         // follows the oval wing tips of the lid
 Hb = 26;                // wall height; the battery reaches up into the lid

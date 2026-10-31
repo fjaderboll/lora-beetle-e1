@@ -4,9 +4,9 @@
 //
 // Hang it on two screws through the keyhole slots (28 mm apart, level).
 // Then slide the top end of the board into the slot at the top, under the
-// antenna tunnel, and press the bottom edge down until the hook clicks. To
-// take the board out, pull the antenna out of the tunnel, push the hook
-// towards the bottom wall, lift that end and pull the board out of the slot.
+// antenna tunnel, and press the bottom edge down until it snaps in under the
+// clip on the bottom wall. To take the board out, pull the antenna out of the
+// tunnel, lift the bottom end past the clip and pull the board out of the slot.
 
 include <beetle-common.scad>
 
@@ -29,12 +29,12 @@ module beetle_base() {
         keyhole_cuts();
         usb_notch();
         bottom_vents();
-        hook_relief();
+        clip_relief();
         // Bevels on the lip so the lid can swing on and off.
         for (z = [Hb - lip_t, Hb]) translate([0, Yb_top + lip_h, z]) rotate([45, 0, 0])
             cube([2 * lip_x + 2, lip_bevel, lip_bevel], center = true);
     }
-    board_hook();
+    board_clip();
 }
 
 // ---------------------------------------------------------------- keyholes
@@ -68,18 +68,10 @@ slot_overlap = 1.5; // how far the bar over the top slot reaches over the board
 
 module board_supports() {
     // Bars across the top and bottom ends, merged into the walls, with
-    // locating pins for the bottom two mounting holes. The bottom bar leaves
-    // room for the hook.
+    // locating pins for the bottom two mounting holes.
     linear_extrude(board_z) intersection() {
         base_outline_2d();
-        union() {
-            translate([-Bw, board_l / 2 - bar_w]) square([2 * Bw, 10]);
-            difference() {
-                translate([-Bw, -board_l / 2 - 10]) square([2 * Bw, 10 + bar_w]);
-                translate([hook_x[0] - 1, hook_face - hook_t - hook_flex - 1])
-                    square([hook_x[1] - hook_x[0] + 2, hook_t + hook_flex + 1.6]);
-            }
-        }
+        for (m = [0, 1]) mirror([0, m]) translate([-Bw, board_l / 2 - bar_w]) square([2 * Bw, 10]);
     }
     // Bar over the top edge of the board: with the bar under it, a slot that
     // keeps the board in when the case is moved around.
@@ -96,24 +88,36 @@ module board_supports() {
         cube([2.5, 12, board_z]);
 }
 
-// Flexible hook that catches the bottom edge of the board.
-hook_face = -board_l / 2 - hook_gap;
-hook_root = floor_t - 1.4;
-hook_top = board_top + 0.2 + hook_ramp + 1.5;
+// Spring bar along the bottom wall, held at its ends by two posts, with a
+// rounded bump that reaches in over the bottom edge of the board and holds it
+// down. The bar bends sideways, along the print layers, so it doesn't snap.
+clip_post = 2;                          // post width
+clip_yb = Yb_bot + wall_t + clip_gap;   // back of the bar
+clip_yf = clip_yb + clip_t;             // front of the bar
 
-module board_hook() {
-    translate([hook_x[0], hook_face - hook_t, hook_root])
-        cube([hook_x[1] - hook_x[0], hook_t, hook_top - hook_root]);
-    // Catch with a lead-in ramp, seen from the side (Y, Z).
-    translate([hook_x[0], 0, 0]) rotate([90, 0, 90]) linear_extrude(hook_x[1] - hook_x[0])
-        polygon([[hook_face - 0.01, board_top + 0.2], [hook_face + hook_catch, board_top + 0.2],
-                 [hook_face - 0.01, board_top + 0.2 + hook_ramp]]);
+module board_clip() {
+    // Bump seen from the side (Y, Z): a rounded tip, 45° underneath so it
+    // prints without support, and a lead-in on top at 30° from vertical. The
+    // top corner of the board just touches the underside.
+    r = 0.6;
+    a = 30;
+    c = [-board_l / 2 + clip_over - r, board_top + clip_over + (sqrt(2) - 1) * r];
+    z_lo = c[1] - (c[0] - clip_yf) - sqrt(2) * r;
+    z_hi = c[1] + r * sin(a) + (c[0] + r * cos(a) - clip_yf) / tan(a);
+    x0 = clip_x - clip_l / 2;
+    translate([x0, clip_yb, board_z]) cube([clip_l, clip_t, z_hi - board_z]);
+    for (x = [x0, x0 + clip_l - clip_post])
+        translate([x, Yb_bot + wall_t - 0.01, board_z - 0.01]) cube([clip_post, clip_gap + 0.02, z_hi - board_z + 0.01]);
+    translate([clip_x - clip_w / 2, 0, 0]) rotate([90, 0, 90]) linear_extrude(clip_w) hull() {
+        translate(c) circle(r = r);
+        translate([clip_yf - 0.01, z_lo]) square([0.01, z_hi - z_lo]);
+    }
 }
 
-// Lowers the floor around the hook so the arm is longer and bends easier.
-module hook_relief() {
-    translate([hook_x[0] - 1, hook_face - hook_t - hook_flex, hook_root])
-        cube([hook_x[1] - hook_x[0] + 2, hook_t + hook_flex + 0.6, floor_t]);
+// Lowers the bottom end bar under the spring bar, so the bar is free to bend.
+module clip_relief() {
+    translate([clip_x - clip_l / 2 + clip_post, Yb_bot + wall_t - 0.01, board_z - 2])
+        cube([clip_l - 2 * clip_post, clip_gap + clip_t + 0.5, 2.01]);
 }
 
 // ----------------------------------------------------------------- antenna

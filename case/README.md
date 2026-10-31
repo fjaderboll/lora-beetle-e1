@@ -6,7 +6,7 @@
 <img src="images/beetle-lid.png" width="32%">
 </p>
 
-A beetle themed wall case (based on this [sketch](images/case-sketch.svg)). It has two
+A beetle themed wall case (based on this [sketch](images/sketch-case.svg)). It has two
 printed parts:
 
 * **Base**: hangs on the wall and holds the carrier board.
@@ -46,9 +46,9 @@ To re-render the images, run `render-images.sh`.
 
 ## Assembly
 1. Slide the top end of the board (the BME280 end) into the slot at the top,
-   under the antenna tunnel in the base. Then press the bottom edge down until the hook
-   clicks. The board rests on a bar at each end, and the two pins go into the
-   bottom mounting holes.
+   under the antenna tunnel in the base. Then press the bottom edge down until it
+   snaps in under the clip on the bottom wall. The board rests on a bar at each
+   end, and the two pins go into the bottom mounting holes.
 2. Push the LoRa antenna up into the tunnel on the right-hand wall, from below.
 3. Hook the top edge of the lid behind the lip on top of the base. Then swing
    the lid down until the snaps on both sides click.
@@ -59,6 +59,6 @@ To re-render the images, run `render-images.sh`.
 To open the case, pull the wing tips away from the wall. Take the lid off to
 charge the battery: a tab on the lid closes the USB-C opening in the bottom
 wall. The opening runs on up the right-hand wall, so the reset button on the
-CubeCell can be reached too. To take out the board, pull the antenna down out of its tunnel, push the
-hook at the bottom edge towards the bottom wall, lift that end of the board and
-pull it out of the slot.
+CubeCell can be reached too. To take out the board, pull the antenna down out
+of its tunnel, lift the bottom end of the board past the clip and pull the board
+out of the slot.
