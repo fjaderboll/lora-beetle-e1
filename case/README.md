@@ -31,8 +31,8 @@ The assembly file has customizer settings to hide parts, lift the lid
 
 Export the STL files with OpenSCAD (*Render*, then *Export as STL*) or run:
 ```shell
-openscad -o beetle-base.stl case/beetle-base.scad
-openscad -o beetle-lid.stl case/beetle-lid.scad
+openscad -o beetle-base.stl beetle-base.scad
+openscad -o beetle-lid.stl beetle-lid.scad
 ```
 
 To re-render the images, run `render-images.sh`.
@@ -52,9 +52,15 @@ To re-render the images, run `render-images.sh`.
 2. Push the LoRa antenna up into the tunnel on the right-hand wall, from below.
 3. Hook the top edge of the lid behind the lip on top of the base. Then swing
    the lid down until the snaps on both sides click.
-4. Drill two holes 28 mm apart in the wall, level with each other, and fit screws with a
-   shank up to 4.4 mm and a head up to 8.5 mm. Leave the heads about 2.5 mm out from the wall. Put the base over
-   the heads and slide it down so it hangs on the keyhole slots.
+4. Hang the base on one or two screws with a shank up to 4.4 mm and a head up
+   to 8.5 mm:
+   * Two screws go in the outer keyhole slots. Drill the holes 28 mm apart,
+     level with each other.
+   * One screw goes in the middle slot. It is 3 mm left of centre, in line with
+     the centre of gravity, so the case hangs straight.
+
+   Leave the heads about 2.5 mm out from the wall. Put the base over the heads
+   and slide it down so it hangs on the keyhole slots.
 
 To open the case, pull the wing tips away from the wall. Take the lid off to
 charge the battery: a tab on the lid closes the USB-C opening in the bottom

@@ -2,7 +2,8 @@
 //
 // Shown in print orientation: back on the bed, no supports needed.
 //
-// Hang it on two screws through the keyhole slots (28 mm apart, level).
+// Hang it on two screws through the outer keyhole slots (28 mm apart, level),
+// or on one screw through the middle one.
 // Then slide the top end of the board into the slot at the top, under the
 // antenna tunnel, and press the bottom edge down until it snaps in under the
 // clip on the bottom wall. To take the board out, pull the antenna out of the
