@@ -28,6 +28,7 @@ Notes:
   underside. The battery is charged through the CubeCell's USB-C port.
 
 ## Carrier board
+*See here for initial [prototype](prototype.md).*
 
 ![Carrier board, top](images/pcb-top.png)
 
@@ -39,7 +40,7 @@ plugs into female pin headers.
 | Ref  | Part                                   | Footprint                 |
 |------|----------------------------------------|---------------------------|
 | BT1  | Keystone 1042P 18650 holder (SMD)      | SMD pads + locating holes |
-| J1   | Battery header (`+` / `−`)             | 1×2 female, 2.54 mm       |
+| J1   | Battery header (`+` / `−`)             | 1×2 male, 2.54 mm         |
 | J2   | CubeCell header J2                     | 1×11 female, 2.54 mm      |
 | J3   | CubeCell header J3 (mechanical, GND)   | 1×11 female, 2.54 mm      |
 | J4   | BME280 module (GY-BME280)              | 1×6 female, 2.54 mm       |
@@ -59,18 +60,7 @@ Routing (red = top layer, blue = bottom layer, GND pours hidden):
 * The battery nets only connect the holder to J1. They are not joined to GND on
   the board, because the CubeCell does that through the JST lead.
 
-Assembly notes:
-* The BH1750 goes in sensor side up, with its body pointing towards the top of
-  the board. The BME280 goes in sensor side down, with its body pointing
-  towards the bottom of the board. The silkscreen outlines show where each
-  body goes, and there is about 17 mm between them. Match the
-  `VCC`/`GND`/… labels on the board to the ones on the module.
-* The M3 hole in the bottom-right corner is under the CubeCell. Fit that screw
-  before plugging the CubeCell in.
-* **Check the battery polarity before connecting.** The `+` end of the
-  holder follows the KiCad footprint (pad 1, the end with the small polarising
-  peg). Confirm it against the marking on your holder, and check `+`/`−` at
-  J1 with a multimeter before plugging in the lead to the CubeCell.
+See [Assembly](#assembly) for how to put it together.
 
 ### Ordering from PCBWay
 
@@ -93,3 +83,67 @@ and the renders in `images/`. You can open `pcb/lora-beetle-e1.kicad_pro` in
 KiCad 9 to inspect the board.
 
 ![Carrier board, 3D view](images/pcb-3d.png)
+
+## Assembly
+
+Besides the board and the parts in the table above, you need:
+* The CubeCell, BME280 and BH1750 modules, with the male pin headers that come
+  with them.
+* The JST 1.25 battery lead (that comes with the CubeCell), a 1×2 female pin
+  header and some heat shrink.
+* An 18650 battery cell.
+
+Use standard 8.5 mm tall female headers. The case is designed for that height,
+so the USB-C port lines up with the opening in the bottom wall.
+
+### Soldering
+
+1. **Battery holder (BT1).** Set the holder on its outline with the pegs in
+   the locating holes. The small polarising peg only lets it sit one way.
+   Solder the two large pads. They take a lot of heat, so use a large tip.
+2. **Battery header (J1).** Push the short pins of the 1×2 male header into
+   the board from the top, and solder them from below.
+3. **Modules and their headers (J2–J5).** Solder each module and its female
+   header as a stack, so the pins end up straight and square. Push the female
+   header into the board from the top, push the male header into it with the
+   long pins down, and put the module on top. Solder the pins on the module,
+   then turn the board over and solder the female header from below. Get the
+   module the right way round first, as it is hard to undo:
+   * **CubeCell (J2, J3):** USB-C side up, with the port at the board edge.
+   * **BH1750 (J5):** sensor side up, with its body pointing towards the top
+     of the board.
+   * **BME280 (J4):** sensor side down, with its body pointing towards the
+     bottom of the board.
+
+   The silkscreen outlines show where each body goes, and there is about
+   17 mm between the two sensors. The `VCC`/`GND`/… labels on the board must
+   match the ones on the module. If a module came with its header already
+   soldered, just solder the female header with the module plugged in.
+4. **Battery lead.** Solder the bare ends to the pins of the 1×2 female
+   header, cover each joint with heat shrink and mark the `+` side. The wire that goes to `+` on the CubeCell's socket (normally red) must
+   end up on `+` at J1.
+
+### Putting it together
+
+1. **Check the board.** With nothing plugged in, check with a multimeter that
+   there is no connection between `VCC` and `GND`, between `SCL` and `SDA`,
+   or between `+` and `−` on J1. `ADDR` and `GND` on J5 are meant to be
+   connected.
+2. **Check the battery polarity.** Put the cell in the holder, as marked on
+   the holder. The `+` end of the holder follows the KiCad footprint (pad 1,
+   the end with the small polarising peg), at the bottom next to `BAT`.
+   Measure J1: `+` should read 3.0–4.2 V against `−`. If it reads negative,
+   stop and find out why before going on.
+3. **Antenna.** Connect the LoRa antenna to the CubeCell. Don't power the
+   CubeCell without it, because transmitting without an antenna can damage
+   the radio.
+4. **Sensors.** Plug the BH1750 into J5 and the BME280 into J4, the same way
+   round as they were soldered.
+5. **CubeCell.** Plug the JST end of the lead into the battery socket on the
+   underside of the CubeCell. Then press the CubeCell into J2 and J3, with
+   USB-C at the board edge, and lead the wire out from under it to J1.
+6. **Power.** Push the lead's female header onto J1, `+` to `+`. The CubeCell
+   starts up. Flash the firmware as described in
+   [Software setup](../README.md#software-setup), and charge the cell through
+   the USB-C port.
+7. **Case.** Fit the board in the case, see [Case assembly](../case/README.md#assembly).

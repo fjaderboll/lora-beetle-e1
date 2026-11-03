@@ -189,7 +189,7 @@ assert bp_y > bn_y, "holder pad 1 (+) should be at the bottom"
 
 # 2-pin header for the JST lead to the CubeCell battery socket.
 # Pin 1 = BAT+ (bottom), pin 2 = BAT- (above it).
-jb = footprint("Connector_PinSocket_2.54mm", "PinSocket_1x02_P2.54mm_Vertical",
+jb = footprint("Connector_PinHeader_2.54mm", "PinHeader_1x02_P2.54mm_Vertical",
                "J1", BAT_X, bp_y, rot=180, value="BAT")
 connect(jb, 1, "BAT+")
 connect(jb, 2, "BAT-")

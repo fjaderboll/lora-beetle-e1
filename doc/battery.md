@@ -16,12 +16,17 @@ Static assumptions:
 * Data length: `24 bytes` (LoRaWAN headers `13 bytes` + uplink [payload](uplink.md) `11 bytes`)
 * Transmit power: `14 dBm` (EU868)
 
-Every uplink wakes the device up, reads the sensors,
+Every uplink wakes the device up, turns on and reads the sensors,
 transmits and then opens two short receive windows for
-a possible [downlink](downlink.md). The first window
-uses the same spreading factor as the uplink, the
-second one SF12 (set in TTN, its default for EU868 is
-SF9).
+a possible [downlink](downlink.md).
+
+The things that affects most are the sending interval
+and the radio conditions:
+* Best case scenario is Data
+Rate 5 (Spreading Factor 7), short airtime
+* Worst case scenario
+Data Rate 0 (Spreading Factor 12), long
+airtime
 
 | Phase             | Current | SF7 time   | SF12 time   |
 | ----------------- | ------- | ---------- | ----------- |
@@ -30,12 +35,6 @@ SF9).
 | Receive window 1  | 10 mA   | 30 ms      | 200 ms      |
 | Receive window 2  | 10 mA   | 200 ms     | 200 ms      |
 | **Per uplink**    |         | **13 mAs** | **142 mAs** |
-
-The things that affects most are the sending interval
-and the radio conditions. Best case scenario is Data
-Rate 5 (Spreading Factor 7) and worst case scenario
-Data Rate 0 (Spreading Factor 12), which will prolong
-the airtime.
 
 Duty cycle is the share of time spent transmitting. In
 EU868 it must be kept below `1 %`.
@@ -57,7 +56,7 @@ less than the battery loses to self-discharge (`2 %` of
 lasts around 3 years whatever the interval. With bad
 radio conditions, the interval matters a lot more.
 
-[^1]: Above the 30 s per day allowed by the TTN
+[^1]: Above the 30 s per day allowed by the TTN's
     [fair use policy](https://www.thethingsnetwork.org/docs/lorawan/duty-cycle/#fair-use-policy).
     At SF12, keep the interval above ~72 minutes.
 

@@ -1,5 +1,5 @@
 # Cost
-Pricing includes taxes, but not shipping or any other import charges.
+Pricing includes taxes, but not shipping or other import fees.
 Many items I bought in bundles.
 
 | Item | Cost |
@@ -10,6 +10,6 @@ Many items I bought in bundles.
 | Lithium-ion battery 3.7V (18650) 3500 mAh | 40 SEK ($4.00) |
 | Battery holder (Keystone 1042P) | 7 SEK ($0.70) |
 | [Circuit board](../board/README.md) (ordered from PCBWay) | 30 SEK ($3.00) |
-| Female pin headers, 2.54 mm (1×2, 2× 1×11, 1×6, 1×5) | 6 SEK ($0.60) |
+| Pin headers, 2.54 mm (female 2× 1×11, 1×6, 1×5, 1×2; male 1×2) | 6 SEK ($0.60) |
 | Filament for [case](../case/README.md) (~80 g) | 25 SEK ($2.50) |
 | **Total** | **370 SEK ($37)** |

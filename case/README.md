@@ -16,7 +16,7 @@ printed parts:
 Air enters under the wing tips at the bottom, rises past the sensors and
 leaves through vents under the thorax lip. All openings face down, so rain
 from above can't get in. The light sensor (BH1750) sits under a thin spot in
-the right wing cover, hopefully letting enough light through.
+the right wing cover, letting relatively much light in.
 
 | File                                           | Contents                                            |
 |------------------------------------------------|-----------------------------------------------------|
@@ -35,14 +35,13 @@ openscad -o beetle-base.stl beetle-base.scad
 openscad -o beetle-lid.stl beetle-lid.scad
 ```
 
-To re-render the images, run `render-images.sh`.
+To re-render the above preview images, run `render-images.sh`.
 
 ## Printing
-* Use PETG or ASA, not PLA. PLA softens in the sun and goes brittle outdoors.
-  Preferable print the lid in a light color, to allow more light in for the light sensor.
-* **Base**: back on the bed, no supports.
+* Preferable use PETG or ASA. PLA softens in the sun and goes brittle outdoors.
+* **Base**: back on the bed, no support needed.
 * **Lid**: open side down, as the file shows it. Enable supports
-  *on build plate only* for the inside of the domes.
+  *on build plate only* for the inside of the domes. The vent holes does not need any.
 
 ## Assembly
 1. Slide the top end of the board (the BME280 end) into the slot at the top,
@@ -62,7 +61,7 @@ To re-render the images, run `render-images.sh`.
    Leave the heads about 2.5 mm out from the wall. Put the base over the heads
    and slide it down so it hangs on the keyhole slots.
 
-To open the case, pull the wing tips away from the wall. Take the lid off to
+To open the case, pull the wing sides away from the wall. Take the lid off to
 charge the battery: a tab on the lid closes the USB-C opening in the bottom
 wall. The opening runs on up the right-hand wall, so the reset button on the
 CubeCell can be reached too. To take out the board, pull the antenna down out

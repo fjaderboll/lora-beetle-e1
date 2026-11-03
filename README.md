@@ -1,9 +1,10 @@
-> [!NOTE]
-> Work in progress, check back regularly for updates. Current [prototype](doc/prototype.md).
 
 # Beetle E1 - LoRa environment sensor
 
-<img src="doc/prototype-top.jpg" align="right">
+<p>
+<img src="doc/images/print-no-lid.jpg" align="right">
+<img src="doc/images/print-with-lid.jpg" align="right">
+</p>
 
 * LoRaWAN implementation
 * Measures:
@@ -46,9 +47,10 @@ See [cost](doc/cost.md) for estimated pricing.
 	* `LORAWAN_Net_Reservation`: `ON` (keep network state across deep sleep)
 	* `LORAWAN_NETMODE`    : `OTAA`
 	* `LORAWAN_REGION`     : `REGION_EU868` (or your region)
+	* `LORAWAN_RGB`        : `DEACTIVE` (to preserve battery)
 	* `LORAWAN_UPLINKMODE` : `UNCONFIRMED`
 6. Compile and flash this to your device.
-7. Take note of the `ChipID`, `DevEUI`, `AppEUI` and `AppKey` in the serial output and register the device in TTN.
+7. Take note of the `ChipID`, `DevEUI`, `AppEUI` and `AppKey` in the serial output and register the device in your LNS (use LoRaWAN v1.0.3).
 
 ### Keys
 Credentials are resolved per field in `keys.h`:
