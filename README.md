@@ -50,7 +50,7 @@ See [cost](doc/cost.md) for estimated pricing.
 	* `LORAWAN_RGB`        : `DEACTIVE` (to preserve battery)
 	* `LORAWAN_UPLINKMODE` : `UNCONFIRMED`
 6. Compile and flash this to your device.
-7. Take note of the `ChipID`, `DevEUI`, `AppEUI` and `AppKey` in the serial output and register the device in your LNS (use LoRaWAN v1.0.3).
+7. Take note of the `ChipID`, `DevEUI`, `AppEUI` and `AppKey` in the serial output and register the device in your LNS (use LoRaWAN v1.0.2 with Regional Parameters v1.0.2 rev B).
 
 ### Keys
 Credentials are resolved per field in `keys.h`:
