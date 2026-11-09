@@ -13,7 +13,7 @@ kicad() {
 kicad python3 build_pcb.py
 
 kicad kicad-cli pcb drc --severity-all --exit-code-violations \
-	-o /tmp/drc.rpt lora-beetle-e1.kicad_pcb
+	-o drc.rpt lora-beetle-e1.kicad_pcb
 
 rm -rf gerbers lora-beetle-e1-gerbers.zip
 mkdir gerbers

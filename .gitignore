@@ -5,3 +5,4 @@
 *.kicad_prl
 *-backups/
 fp-info-cache
+/board/pcb/drc.rpt
