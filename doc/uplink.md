@@ -1,4 +1,11 @@
-# Uplink payload
+# Uplink
+Uplinks are sent after join and then by default every 15 minutes.
+This interval can be changed with a [downlink command](downlink.md).
+
+To manually trigger a uplink directly, push the *User* button on the
+left side of the *CubeCell* (when the USB-C port is facing down).
+
+## Payload
 
 Sent on `port 2`, 11 bytes, big-endian:
 

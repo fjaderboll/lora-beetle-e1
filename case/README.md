@@ -38,10 +38,10 @@ openscad -o beetle-lid.stl beetle-lid.scad
 To re-render the above preview images, run `render-images.sh`.
 
 ## Printing
-* Preferable use PETG or ASA. PLA softens in the sun and goes brittle outdoors.
 * **Base**: back on the bed, no support needed.
 * **Lid**: open side down, as the file shows it. Enable supports
-  *on build plate only* for the inside of the domes. The vent holes does not need any.
+  *on build plate only* for the inside of the domes. The vent holes does not need support.
+* **Material**: PLA works fine. If mounted outdoors, PLA might soften in the sun and go brittle over time, consider using PETG or ASA instead.
 
 ## Assembly
 1. Slide the top end of the board (the BME280 end) into the slot at the top,
@@ -53,17 +53,23 @@ To re-render the above preview images, run `render-images.sh`.
    the lid down until the snaps on both sides click.
 4. Hang the base on one or two screws with a shank up to 4.4 mm and a head up
    to 8.5 mm:
-   * Two screws go in the outer keyhole slots. Drill the holes 28 mm apart,
+   * **Two screws** go in the outer keyhole slots. Drill the holes 28 mm apart,
      level with each other.
-   * One screw goes in the middle slot. It is 3 mm left of centre, in line with
+   * **One screw** goes in the middle slot. It is 3 mm left of centre, in line with
      the centre of gravity, so the case hangs straight.
 
    Leave the heads about 2.5 mm out from the wall. Put the base over the heads
    and slide it down so it hangs on the keyhole slots.
 
-To open the case, pull the wing sides away from the wall. Take the lid off to
-charge the battery: a tab on the lid closes the USB-C opening in the bottom
-wall. The opening runs on up the right-hand wall, so the reset button on the
-CubeCell can be reached too. To take out the board, pull the antenna down out
-of its tunnel, lift the bottom end of the board past the clip and pull the board
-out of the slot.
+<p>
+<img src="../doc/images/print-no-lid.jpg" width="45%">
+<img src="../doc/images/print-with-lid.jpg" width="45%">
+</p>
+
+To open the case, push gently on the sides where the clips are and pull the bottom
+part of the lid up.
+
+Once the lid is off, the USB-C port if available for charging (or debugging).
+Also, the buttons are accessible:
+* **Reset** button (right side) resets the device and performs a new join.
+* **User** button (left side) triggers a uplink and restarts the interval.

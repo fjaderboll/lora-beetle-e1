@@ -9,7 +9,7 @@
 //   AppKey: keyMap entry -> DEFAULT_APP_KEY
 // An omitted or all-zero field in a keyMap entry means "use the fallback".
 
-// AppEUI (aka JoinEUI) shared by all your devices.
+// AppEUI (aka JoinEUI) usually shared by all your devices.
 #define DEFAULT_APP_EUI { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
 
 // AppKey shared by all devices without their own appKey below.

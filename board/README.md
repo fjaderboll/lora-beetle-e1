@@ -89,7 +89,7 @@ KiCad 9 to inspect the board.
 
 ## Assembly
 
-![Assembly](images/assembly.jpg)
+![Assembly, parts](images/assembly-parts.jpg)
 
 Besides the board and the parts in the table above, you need:
 * The CubeCell, BME280 and BH1750 modules, with the male pin headers that come
@@ -147,3 +147,5 @@ Use standard 8.5 mm tall female headers. The case is designed for that height.
   the USB-C port.
 7. **Case.**
   Fit the board in the case, see [Case assembly](../case/README.md#assembly).
+
+![Assembled](images/assembly-assembled.jpg)
