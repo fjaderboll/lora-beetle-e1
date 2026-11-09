@@ -20,7 +20,7 @@ Every uplink wakes the device up, turns on and reads the sensors,
 transmits and then opens two short receive windows for
 a possible [downlink](downlink.md).
 
-The things that affects most are the sending interval
+The things that affect it most are the sending interval
 and the radio conditions:
 * Best case scenario is Data
 Rate 5 (Spreading Factor 7), short airtime

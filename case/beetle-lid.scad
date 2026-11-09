@@ -1,8 +1,7 @@
 // Beetle E1 case: lid (thorax and wing covers).
 //
 // Shown in print orientation: open side down. Supports from the build plate
-// only, for the inside of the domes. Print in white so the light sensor
-// sees daylight through the thin window.
+// only, for the inside of the domes.
 //
 // The hook along the top edge goes in behind the lip on the base. Swing the
 // lid down onto the base until the side snaps click. To open, pull the wing

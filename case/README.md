@@ -40,7 +40,7 @@ To re-render the above preview images, run `render-images.sh`.
 ## Printing
 * **Base**: back on the bed, no support needed.
 * **Lid**: open side down, as the file shows it. Enable supports
-  *on build plate only* for the inside of the domes. The vent holes does not need support.
+  *on build plate only* for the inside of the domes. The vent holes do not need support.
 * **Material**: PLA works fine. If mounted outdoors, PLA might soften in the sun and go brittle over time, consider using PETG or ASA instead.
 
 ## Assembly
@@ -51,8 +51,8 @@ To re-render the above preview images, run `render-images.sh`.
 2. Push the LoRa antenna up into the tunnel on the right-hand wall, from below.
 3. Hook the top edge of the lid behind the lip on top of the base. Then swing
    the lid down until the snaps on both sides click.
-4. Hang the base on one or two screws with a shank up to 4.4 mm and a head up
-   to 8.5 mm:
+4. Hang the base on one or two screws, with a shank of up to about 4 mm and a
+   head of up to about 8 mm:
    * **Two screws** go in the outer keyhole slots. Drill the holes 28 mm apart,
      level with each other.
    * **One screw** goes in the middle slot. It is 3 mm left of centre, in line with
@@ -69,7 +69,7 @@ To re-render the above preview images, run `render-images.sh`.
 To open the case, push gently on the sides where the clips are and pull the bottom
 part of the lid up.
 
-Once the lid is off, the USB-C port if available for charging (or debugging).
+Once the lid is off, the USB-C port is available for charging (or debugging).
 Also, the buttons are accessible:
 * **Reset** button (right side) resets the device and performs a new join.
-* **User** button (left side) triggers a uplink and restarts the interval.
+* **User** button (left side) triggers an uplink and restarts the interval.

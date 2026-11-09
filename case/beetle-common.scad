@@ -83,7 +83,7 @@ lip_x = 25.5;           // half length
 lip_bevel = 1.6;        // size of the 45° bevels on its outer edges
 
 // Keyhole slots for hanging the case on two screws, in the outer two, or on
-// one screw, in the middle one (head up to 8.5 mm). The middle one is in line
+// one screw, in the middle one (head up to about 8 mm). The middle one is in line
 // with the centre of gravity, which the battery pulls 3 mm left of centre.
 key_pos = [[-14, 20], [14, 20], [-3, 20]];
 key_head_d = 8.5;

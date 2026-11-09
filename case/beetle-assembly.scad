@@ -63,7 +63,7 @@ module board_mockup() {
     color("silver") translate([usb_x - usb_w / 2, cc_y[0] - usb_overhang, board_top + header_stack + cc_pcb_t])
         cube([usb_w, 7.4, usb_h]);
 
-    // BME280 (sensor side down) and BH1750 (sensor side up) on their sockets.
+    // BME280 and BH1750 on their sockets, sensor side up.
     sensor(kicad([40.63, 9]), 15.5, -12, "#5b2a86");
     sensor(kicad([41.9, 53.5]), 13.9, 18, "#1e4f9c");
 

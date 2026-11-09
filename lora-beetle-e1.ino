@@ -94,11 +94,10 @@ bool overTheAirActivation      = true;
 /* Adaptive Data Rate. */
 bool loraWanAdr                = true;
 
-/* Keep network state between deep-sleep cycles
- * (so we don't have to re-join on every wake-up).
- * NOTE: temporarily set to false while debugging join failures so
- * the device always performs a fresh OTAA join. */
-bool keepNet                   = true;
+/* Don't save the session to flash. Only LoRaWAN.ifskipjoin() reads it back,
+ * and this sketch always joins after a reset. The session survives deep
+ * sleep in RAM. */
+bool keepNet                   = false;
 
 /* Unconfirmed uplinks (saves airtime / battery). */
 bool isTxConfirmed             = false;
@@ -215,7 +214,7 @@ static void printHex(const char *label, const uint8_t *buf, int len)
 static void setupKeys()
 {
 	uint64_t chipId = getID();
-	Serial.printf("ChipID: %04X%08X\n", (uint16_t)(chipId>>32), (uint32_t)chipId);
+	Serial.printf("ChipID: %04X%08X\n", (uint32_t)(chipId>>32), (uint32_t)chipId);
 
 	// Defaults
 	static const uint8_t defaultAppEui[8] = DEFAULT_APP_EUI;
@@ -439,9 +438,8 @@ void setup()
 	setupKeys();
 	attachButton();
 
+	/* Always do a fresh OTAA join after a reset or power-up. */
 	deviceState = DEVICE_STATE_INIT;
-	/* Skip-join check disabled while debugging — always re-join on boot. */
-	// LoRaWAN.ifskipjoin();
 }
 
 void loop()

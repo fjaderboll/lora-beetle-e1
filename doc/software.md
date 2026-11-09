@@ -13,19 +13,18 @@ I'm assuming the use of *Arduino IDE* for below.
 	https://github.com/HelTecAutomation/CubeCell-Arduino/releases/download/V1.7.1/package_CubeCell_index.json
 	```
 	2. In *Board manager*, install *CubeCell Development Framework*
-3. Open this project and select board `CubeCell-Board (HTCC-AB01-V2)`
+3. Open this project and select board `CubeCell-Board-V2 (HTCC-AB01-V2)`
 4. Install the following libraries via the Arduino *Library Manager*:
 	* `Adafruit BME280 Library` (pulls in `Adafruit Unified Sensor`)
 	* `BH1750` by Christopher Laws
 5. In the *Tools* menu, configure:
-	* `LORAWAN_ADR`        : `ON`
-	* `LORAWAN_CLASS`      : `CLASS_A`
-	* `LORAWAN_DEVEUI`     : `CUSTOM`
-	* `LORAWAN_Net_Reservation`: `ON` (keep network state across deep sleep)
-	* `LORAWAN_NETMODE`    : `OTAA`
-	* `LORAWAN_REGION`     : `REGION_EU868` (or your region)
-	* `LORAWAN_RGB`        : `DEACTIVE` (to preserve battery)
-	* `LORAWAN_UPLINKMODE` : `UNCONFIRMED`
+	* `LORAWAN_REGION`: `REGION_EU868` (or your region)
+	* `LORAWAN_RGB`: `DEACTIVE` (to preserve battery)
+
+	The sketch sets class A, OTAA, ADR, unconfirmed uplinks and the DevEUI
+	itself, and always joins after a reset. The `LORAWAN_ADR`, `LORAWAN_CLASS`,
+	`LORAWAN_DEVEUI`, `LORAWAN_Net_Reservation`, `LORAWAN_NETMODE` and
+	`LORAWAN_UPLINKMODE` settings have no effect.
 6. Compile and flash this to your device.
 7. Take note of the `ChipID`, `DevEUI`, `AppEUI` and `AppKey` in the serial output and register the device in your LNS (use LoRaWAN v1.0.2 with Regional Parameters v1.0.2 rev B).
 

@@ -109,7 +109,7 @@ Use standard 8.5 mm tall female headers. The case is designed for that height.
   Solder each of the female headers onto the board.
 3. **Battery holder (BT1).**
   Prepare the holder with tin on the underside of the pads. Place the holder on
-  its outline with the pegs in the locating holes. Heat the the two pads until
+  its outline with the pegs in the locating holes. Heat the two pads until
   the tin underneath melts.
 4. **Components (U1-U3).**
   Solder male pins onto each module and consider their final orientation:
@@ -125,7 +125,7 @@ Use standard 8.5 mm tall female headers. The case is designed for that height.
 ### Putting it together
 
 1. **Battery lead**
-  Use a crimping tool to attach the 1x2 female pin header to the open end of
+  Use a crimping tool to attach the 1×2 female pin header to the open end of
   the battery lead.
 2. **Battery.**
   Put the cell in the holder, make sure to check the polarity.
@@ -143,7 +143,7 @@ Use standard 8.5 mm tall female headers. The case is designed for that height.
 6. **Power.**
   Push the lead's female header onto J1, `+` to `+`. The CubeCell
   starts up. Flash the firmware as described in
-  [Software setup](../README.md#software-setup), and charge the cell through
+  [software setup](../doc/software.md#setup), and charge the cell through
   the USB-C port.
 7. **Case.**
   Fit the board in the case, see [Case assembly](../case/README.md#assembly).

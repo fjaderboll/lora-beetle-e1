@@ -2,7 +2,7 @@
 Uplinks are sent after join and then by default every 15 minutes.
 This interval can be changed with a [downlink command](downlink.md).
 
-To manually trigger a uplink directly, push the *User* button on the
+To manually trigger an uplink directly, push the *User* button on the
 left side of the *CubeCell* (when the USB-C port is facing down).
 
 ## Payload
@@ -15,8 +15,8 @@ Sent on `port 2`, 11 bytes, big-endian:
 | 2..3  | Humidity     | `uint16`, value × 100 | `5012`  → 50.12 % |
 | 4..5  | Pressure     | `uint16`, value × 10  | `10132` → 1013.2 hPa |
 | 6..9  | Light        | `uint32`, value × 100 | `12345` → 123.45 lux |
-| 10    | BatteryLevel | `uint8`, value x 1    | `0` = external power, `1..254` = 0-100%, `255` = N/A  |
+| 10    | BatteryLevel | `uint8`, value × 1    | `0` = external power, `1..254` = 0-100%, `255` = N/A  |
 
 ## Decoding
-If your're using TTN, use content from [ttn-uplink-formatter.js](../ttn-uplink-formatter.js) for the
-*Custom Javscript formatter*.
+If you're using TTN, use content from [ttn-uplink-formatter.js](../ttn-uplink-formatter.js) for the
+*Custom JavaScript formatter*.
