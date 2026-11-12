@@ -2,8 +2,8 @@
 # Beetle E1 - LoRa environment sensor
 
 <p>
-<img src="doc/images/print-no-lid.jpg" align="right">
-<img src="doc/images/print-with-lid.jpg" align="right">
+<img src="doc/images/beetle-half-open.jpg" align="right" width="51%">
+<img src="doc/images/print-with-lid.jpg" align="right" width="51%">
 </p>
 
 * LoRaWAN implementation
